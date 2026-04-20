@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('title', 'Vehículos')
-@section('page-title', '🚗 Registro de Flota Vehicular')
+@section('page-title', '🚗 Registro de Flota del parque Vehicular')
 
 @section('content')
 
