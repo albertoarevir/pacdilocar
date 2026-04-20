@@ -7,20 +7,20 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Zone extends Model
 {
-    protected $fillable = ['name'];
+    protected $fillable = ['nombre'];
 
-    public function municipalities(): HasMany
+    public function municipios(): HasMany
     {
-        return $this->hasMany(Municipality::class);
+        return $this->hasMany(Municipality::class, 'zona_id');
     }
 
-    public function prefectures(): HasMany
+    public function prefecturas(): HasMany
     {
-        return $this->hasMany(Prefecture::class);
+        return $this->hasMany(Prefecture::class, 'zona_id');
     }
 
-    public function vehicles(): HasMany
+    public function vehiculos(): HasMany
     {
-        return $this->hasMany(Vehicle::class);
+        return $this->hasMany(Vehicle::class, 'zona_id');
     }
 }

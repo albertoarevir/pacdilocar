@@ -7,15 +7,15 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Brand extends Model
 {
-    protected $fillable = ['name'];
+    protected $fillable = ['nombre'];
 
-    public function vehicleModels(): HasMany
+    public function modelos(): HasMany
     {
-        return $this->hasMany(VehicleModel::class);
+        return $this->hasMany(VehicleModel::class, 'marca_id');
     }
 
-    public function vehicles(): HasMany
+    public function vehiculos(): HasMany
     {
-        return $this->hasMany(Vehicle::class);
+        return $this->hasMany(Vehicle::class, 'marca_id');
     }
 }

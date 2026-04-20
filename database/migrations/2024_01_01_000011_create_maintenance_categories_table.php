@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('maintenance_categories', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 80)->unique();
-            $table->string('description', 255)->nullable();
+            $table->string('nombre', 80)->unique();
+            $table->string('descripcion', 255)->nullable();
             $table->timestamps();
         });
     }

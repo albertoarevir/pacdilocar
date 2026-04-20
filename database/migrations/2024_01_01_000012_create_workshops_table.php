@@ -10,12 +10,12 @@ return new class extends Migration
     {
         Schema::create('workshops', function (Blueprint $table) {
             $table->id();
-            $table->enum('type', ['interno', 'particular', 'zonal', 'otro'])->default('interno');
-            $table->string('name', 150)->unique();
-            $table->string('address', 255)->nullable();
-            $table->string('phone', 30)->nullable();
-            $table->string('contact_person', 100)->nullable();
-            $table->boolean('is_active')->default(true);
+            $table->enum('tipo', ['interno', 'particular', 'zonal', 'otro'])->default('interno');
+            $table->string('nombre', 150)->unique();
+            $table->string('direccion', 255)->nullable();
+            $table->string('telefono', 30)->nullable();
+            $table->string('persona_contacto', 100)->nullable();
+            $table->boolean('activo')->default(true);
             $table->timestamps();
             $table->softDeletes();
         });

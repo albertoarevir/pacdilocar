@@ -10,89 +10,89 @@ use Illuminate\Support\Facades\DB;
 
 class DashboardService
 {
-    public function getSummary(): array
+    public function getResumen(): array
     {
-        $statusCounts = Vehicle::select('vehicle_status_id', DB::raw('count(*) as total'))
-            ->groupBy('vehicle_status_id')
-            ->with('vehicleStatus:id,code,name')
+        $conteoEstados = Vehicle::select('estado_vehiculo_id', DB::raw('count(*) as total'))
+            ->groupBy('estado_vehiculo_id')
+            ->with('estadoVehiculo:id,codigo,nombre')
             ->get()
-            ->mapWithKeys(fn($row) => [
-                ($row->vehicleStatus->code ?? 'DESCONOCIDO') => $row->total
+            ->mapWithKeys(fn($fila) => [
+                ($fila->estadoVehiculo->codigo ?? 'DESCONOCIDO') => $fila->total
             ])
             ->toArray();
 
-        $totalVehicles = array_sum($statusCounts);
+        $totalVehiculos = array_sum($conteoEstados);
 
-        $workshopStats = MaintenanceRecord::select([
-            DB::raw('count(*) as total_records'),
-            DB::raw('sum(case when record_status = "Cerrado" then 1 else 0 end) as closed'),
-            DB::raw('sum(case when record_status = "Abierto" then 1 else 0 end) as open'),
-            DB::raw('sum(case when record_status = "En Diagnóstico" then 1 else 0 end) as in_diagnosis'),
-            DB::raw('sum(downtime_days) as total_downtime_days'),
-            DB::raw('avg(downtime_days) as avg_days_in_workshop'),
-            DB::raw('sum(total_cost) as total_repair_cost'),
+        $estadosTaller = MaintenanceRecord::select([
+            DB::raw('count(*) as total_registros'),
+            DB::raw('sum(case when estado = "Cerrado" then 1 else 0 end) as cerrados'),
+            DB::raw('sum(case when estado = "Abierto" then 1 else 0 end) as abiertos'),
+            DB::raw('sum(case when estado = "En Diagnóstico" then 1 else 0 end) as en_diagnostico'),
+            DB::raw('sum(dias_paralizado) as total_dias_paralizado'),
+            DB::raw('avg(dias_paralizado) as promedio_dias_taller'),
+            DB::raw('sum(costo_total) as costo_total_reparacion'),
         ])->first();
 
-        $byCategory = MaintenanceRecord::select([
-            'maintenance_category_id',
+        $porCategoria = MaintenanceRecord::select([
+            'categoria_id',
             DB::raw('count(*) as total'),
-            DB::raw('sum(total_cost) as total_cost'),
-            DB::raw('avg(downtime_days) as avg_downtime'),
+            DB::raw('sum(costo_total) as costo_total'),
+            DB::raw('avg(dias_paralizado) as promedio_paralizado'),
         ])
-            ->with('maintenanceCategory:id,name')
-            ->groupBy('maintenance_category_id')
+            ->with('categoriaMantenimiento:id,nombre')
+            ->groupBy('categoria_id')
             ->get();
 
-        $byType = MaintenanceRecord::select([
-            'maintenance_type',
+        $porTipo = MaintenanceRecord::select([
+            'tipo_mantenimiento',
             DB::raw('count(*) as total'),
-            DB::raw('sum(total_cost) as total_cost'),
+            DB::raw('sum(costo_total) as costo_total'),
         ])
-            ->groupBy('maintenance_type')
+            ->groupBy('tipo_mantenimiento')
             ->get();
 
-        $fleetAvailability = OperationalSummary::avg('availability_pct');
+        $disponibilidadFlota = OperationalSummary::avg('pct_disponibilidad');
 
-        $top5Vehicles = MaintenanceRecord::select([
-            'vehicle_id',
-            DB::raw('count(*) as entries'),
-            DB::raw('sum(downtime_days) as total_downtime'),
-            DB::raw('sum(total_cost) as total_cost'),
+        $top5Vehiculos = MaintenanceRecord::select([
+            'vehiculo_id',
+            DB::raw('count(*) as ingresos'),
+            DB::raw('sum(dias_paralizado) as total_paralizado'),
+            DB::raw('sum(costo_total) as costo_total'),
         ])
-            ->with('vehicle:id,patente')
-            ->groupBy('vehicle_id')
-            ->orderByDesc('entries')
+            ->with('vehiculo:id,patente')
+            ->groupBy('vehiculo_id')
+            ->orderByDesc('ingresos')
             ->limit(5)
             ->get();
 
         return [
-            'fleet' => [
-                'total'            => $totalVehicles,
-                'by_status'        => $statusCounts,
-                'avg_availability' => round(($fleetAvailability ?? 0) * 100, 2) . '%',
+            'flota' => [
+                'total'                => $totalVehiculos,
+                'por_estado'           => $conteoEstados,
+                'disponibilidad_media' => round(($disponibilidadFlota ?? 0) * 100, 2) . '%',
             ],
-            'workshop'            => $workshopStats,
-            'by_category'         => $byCategory,
-            'by_maintenance_type' => $byType,
-            'top5_vehicles'       => $top5Vehicles,
+            'taller'               => $estadosTaller,
+            'por_categoria'        => $porCategoria,
+            'por_tipo_mantenimiento' => $porTipo,
+            'top5_vehiculos'       => $top5Vehiculos,
         ];
     }
 
-    public function getFleetStatusBreakdown(): array
+    public function getDesglosePorEstado(): array
     {
-        $statuses = VehicleStatus::orderBy('sort_order')->get();
+        $estados = VehicleStatus::orderBy('orden')->get();
 
-        $counts = Vehicle::select('vehicle_status_id', DB::raw('count(*) as total'))
-            ->groupBy('vehicle_status_id')
-            ->pluck('total', 'vehicle_status_id');
+        $conteos = Vehicle::select('estado_vehiculo_id', DB::raw('count(*) as total'))
+            ->groupBy('estado_vehiculo_id')
+            ->pluck('total', 'estado_vehiculo_id');
 
-        $total = $counts->sum();
+        $total = $conteos->sum();
 
-        return $statuses->map(fn($s) => [
-            'status'      => $s->code,
-            'description' => $s->description ?? $s->name,
-            'count'       => $counts[$s->id] ?? 0,
-            'pct'         => $total > 0 ? round(($counts[$s->id] ?? 0) / $total * 100, 2) : 0,
+        return $estados->map(fn($e) => [
+            'estado'      => $e->codigo,
+            'descripcion' => $e->descripcion ?? $e->nombre,
+            'cantidad'    => $conteos[$e->id] ?? 0,
+            'pct'         => $total > 0 ? round(($conteos[$e->id] ?? 0) / $total * 100, 2) : 0,
         ])->toArray();
     }
 }

@@ -8,32 +8,32 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class OperationalSummary extends Model
 {
     protected $fillable = [
-        'vehicle_id', 'total_service_days', 'total_workshop_days',
-        'operational_days', 'availability_pct', 'downtime_pct',
-        'workshop_entries', 'total_maintenance_cost', 'mttr_days',
-        'last_computed_at',
+        'vehiculo_id', 'dias_servicio_total', 'dias_taller_total',
+        'dias_operativos', 'pct_disponibilidad', 'pct_paralizado',
+        'ingresos_taller', 'costo_mantenimiento_total', 'dias_mttr',
+        'ultima_actualizacion',
     ];
 
     protected $casts = [
-        'availability_pct'       => 'decimal:4',
-        'downtime_pct'           => 'decimal:4',
-        'total_maintenance_cost' => 'decimal:2',
-        'mttr_days'              => 'decimal:2',
-        'last_computed_at'       => 'datetime',
+        'pct_disponibilidad'        => 'decimal:4',
+        'pct_paralizado'            => 'decimal:4',
+        'costo_mantenimiento_total' => 'decimal:2',
+        'dias_mttr'                 => 'decimal:2',
+        'ultima_actualizacion'      => 'datetime',
     ];
 
-    public function vehicle(): BelongsTo
+    public function vehiculo(): BelongsTo
     {
-        return $this->belongsTo(Vehicle::class);
+        return $this->belongsTo(Vehicle::class, 'vehiculo_id');
     }
 
-    public function getAvailabilityPercentAttribute(): string
+    public function getPorcentajeDisponibilidadAttribute(): string
     {
-        return number_format($this->availability_pct * 100, 2) . '%';
+        return number_format($this->pct_disponibilidad * 100, 2) . '%';
     }
 
-    public function getDowntimePercentAttribute(): string
+    public function getPorcentajeParalizadoAttribute(): string
     {
-        return number_format($this->downtime_pct * 100, 2) . '%';
+        return number_format($this->pct_paralizado * 100, 2) . '%';
     }
 }

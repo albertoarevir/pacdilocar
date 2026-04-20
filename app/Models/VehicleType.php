@@ -7,10 +7,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class VehicleType extends Model
 {
-    protected $fillable = ['code', 'name'];
+    protected $fillable = ['codigo', 'nombre'];
 
-    public function vehicles(): HasMany
+    public function vehiculos(): HasMany
     {
-        return $this->hasMany(Vehicle::class);
+        return $this->hasMany(Vehicle::class, 'tipo_vehiculo_id');
     }
 }

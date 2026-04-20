@@ -11,41 +11,40 @@ class Unit extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['prefecture_id', 'parent_id', 'type', 'name'];
+    protected $fillable = ['prefectura_id', 'unidad_padre_id', 'tipo', 'nombre'];
 
-    public function prefecture(): BelongsTo
+    public function prefectura(): BelongsTo
     {
-        return $this->belongsTo(Prefecture::class);
+        return $this->belongsTo(Prefecture::class, 'prefectura_id');
     }
 
-    /** Unidad padre (para destacamentos) */
-    public function parent(): BelongsTo
+    public function unidadPadre(): BelongsTo
     {
-        return $this->belongsTo(Unit::class, 'parent_id');
+        return $this->belongsTo(Unit::class, 'unidad_padre_id');
     }
 
-    public function children(): HasMany
+    public function hijos(): HasMany
     {
-        return $this->hasMany(Unit::class, 'parent_id');
+        return $this->hasMany(Unit::class, 'unidad_padre_id');
     }
 
-    public function vehicles(): HasMany
+    public function vehiculos(): HasMany
     {
-        return $this->hasMany(Vehicle::class);
+        return $this->hasMany(Vehicle::class, 'unidad_id');
     }
 
-    public function aggregatedVehicles(): HasMany
+    public function vehiculosAgregados(): HasMany
     {
-        return $this->hasMany(Vehicle::class, 'aggregate_unit_id');
+        return $this->hasMany(Vehicle::class, 'unidad_agregado_id');
     }
 
     public function scopeUnidades($query)
     {
-        return $query->where('type', 'unidad');
+        return $query->where('tipo', 'unidad');
     }
 
     public function scopeDestacamentos($query)
     {
-        return $query->where('type', 'destacamento');
+        return $query->where('tipo', 'destacamento');
     }
 }

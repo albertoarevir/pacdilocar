@@ -11,116 +11,119 @@ return new class extends Migration
     {
         // ── 1. Agregar columnas FK (nullable para no romper registros existentes) ──
         Schema::table('vehicles', function (Blueprint $table) {
-            if (! Schema::hasColumn('vehicles', 'brand_id')) {
-                $table->foreignId('brand_id')
-                    ->nullable()->after('chassis_number')
+            if (! Schema::hasColumn('vehicles', 'marca_id')) {
+                $table->foreignId('marca_id')
+                    ->nullable()->after('numero_chasis')
                     ->constrained('brands')->nullOnDelete();
             }
-            if (! Schema::hasColumn('vehicles', 'vehicle_model_id')) {
-                $table->foreignId('vehicle_model_id')
-                    ->nullable()->after('brand_id')
+            if (! Schema::hasColumn('vehicles', 'modelo_id')) {
+                $table->foreignId('modelo_id')
+                    ->nullable()->after('marca_id')
                     ->constrained('vehicle_models')->nullOnDelete();
             }
-            if (! Schema::hasColumn('vehicles', 'vehicle_status_id')) {
-                $table->foreignId('vehicle_status_id')
-                    ->nullable()->after('vehicle_model_id')
+            if (! Schema::hasColumn('vehicles', 'estado_vehiculo_id')) {
+                $table->foreignId('estado_vehiculo_id')
+                    ->nullable()->after('modelo_id')
                     ->constrained('vehicle_statuses')->restrictOnDelete();
             }
-            if (! Schema::hasColumn('vehicles', 'vehicle_function_id')) {
-                $table->foreignId('vehicle_function_id')
-                    ->nullable()->after('vehicle_status_id')
+            if (! Schema::hasColumn('vehicles', 'funcion_id')) {
+                $table->foreignId('funcion_id')
+                    ->nullable()->after('estado_vehiculo_id')
                     ->constrained('vehicle_functions')->nullOnDelete();
             }
         });
 
-        // ── 2. Migrar datos: brand (string) → brand_id ────────────────────────────
-        $existingBrands = DB::table('vehicles')
-            ->whereNotNull('brand')
+        // ── 2. Migrar datos: marca (string) → marca_id ────────────────────────────
+        $marcasExistentes = DB::table('vehicles')
+            ->whereNotNull('marca')
             ->distinct()
-            ->pluck('brand');
+            ->pluck('marca');
 
-        foreach ($existingBrands as $brandName) {
+        foreach ($marcasExistentes as $nombreMarca) {
             DB::table('brands')->insertOrIgnore([
-                'name'       => $brandName,
+                'nombre'     => $nombreMarca,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-            $brandId = DB::table('brands')->where('name', $brandName)->value('id');
+            $marcaId = DB::table('brands')->where('nombre', $nombreMarca)->value('id');
 
             // Migrar modelos de esa marca
-            $existingModels = DB::table('vehicles')
-                ->where('brand', $brandName)
-                ->whereNotNull('model')
+            $modelosExistentes = DB::table('vehicles')
+                ->where('marca', $nombreMarca)
+                ->whereNotNull('modelo')
                 ->distinct()
-                ->pluck('model');
+                ->pluck('modelo');
 
-            foreach ($existingModels as $modelName) {
+            foreach ($modelosExistentes as $nombreModelo) {
                 DB::table('vehicle_models')->insertOrIgnore([
-                    'brand_id'   => $brandId,
-                    'name'       => $modelName,
+                    'marca_id'   => $marcaId,
+                    'nombre'     => $nombreModelo,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
-                $modelId = DB::table('vehicle_models')->where('brand_id', $brandId)->where('name', $modelName)->value('id');
+                $modeloId = DB::table('vehicle_models')
+                    ->where('marca_id', $marcaId)
+                    ->where('nombre', $nombreModelo)
+                    ->value('id');
                 DB::table('vehicles')
-                    ->where('brand', $brandName)
-                    ->where('model', $modelName)
-                    ->update(['brand_id' => $brandId, 'vehicle_model_id' => $modelId]);
+                    ->where('marca', $nombreMarca)
+                    ->where('modelo', $nombreModelo)
+                    ->update(['marca_id' => $marcaId, 'modelo_id' => $modeloId]);
             }
 
             // Vehículos con marca pero sin modelo
             DB::table('vehicles')
-                ->where('brand', $brandName)
-                ->whereNull('model')
-                ->update(['brand_id' => $brandId]);
+                ->where('marca', $nombreMarca)
+                ->whereNull('modelo')
+                ->update(['marca_id' => $marcaId]);
         }
 
-        // ── 3. Migrar datos: status (string) → vehicle_status_id ─────────────────
+        // ── 3. Migrar datos: estado (string) → estado_vehiculo_id ─────────────────
         DB::table('vehicles')->orderBy('id')->each(function ($v) {
-            $statusId = DB::table('vehicle_statuses')
-                ->where('code', $v->status)
+            $estadoId = DB::table('vehicle_statuses')
+                ->where('codigo', $v->estado)
                 ->value('id');
-            if ($statusId) {
+            if ($estadoId) {
                 DB::table('vehicles')
                     ->where('id', $v->id)
-                    ->update(['vehicle_status_id' => $statusId]);
+                    ->update(['estado_vehiculo_id' => $estadoId]);
             }
         });
 
-        // ── 4. Migrar datos: function (string) → vehicle_function_id ─────────────
-        $existingFunctions = DB::table('vehicles')
-            ->whereNotNull('function')
+        // ── 4. Migrar datos: funcion (string) → funcion_id ─────────────────────
+        $funcionesExistentes = DB::table('vehicles')
+            ->whereNotNull('funcion')
             ->distinct()
-            ->pluck('function');
+            ->pluck('funcion');
 
-        foreach ($existingFunctions as $fnName) {
+        foreach ($funcionesExistentes as $nombreFuncion) {
             $fnId = DB::table('vehicle_functions')
-                ->where('name', $fnName)
+                ->where('nombre', $nombreFuncion)
                 ->value('id');
 
             if (! $fnId) {
                 $fnId = DB::table('vehicle_functions')->insertGetId([
-                    'name'       => $fnName,
+                    'nombre'     => $nombreFuncion,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);
             }
 
             DB::table('vehicles')
-                ->where('function', $fnName)
-                ->update(['vehicle_function_id' => $fnId]);
+                ->where('funcion', $nombreFuncion)
+                ->update(['funcion_id' => $fnId]);
         }
 
-        // ── 5. Hacer vehicle_status_id NOT NULL (todos tienen valor ahora) ────────
+        // ── 5. Hacer estado_vehiculo_id NOT NULL (todos tienen valor ahora) ────────
         Schema::table('vehicles', function (Blueprint $table) {
-            $table->unsignedBigInteger('vehicle_status_id')->nullable(false)->change();
+            $table->unsignedBigInteger('estado_vehiculo_id')->nullable(false)->change();
         });
 
         // ── 6. Eliminar columnas string reemplazadas ──────────────────────────────
-        $toDrop = array_filter(['brand', 'model', 'status', 'function'], fn($col) => Schema::hasColumn('vehicles', $col));
-        if ($toDrop) {
-            Schema::table('vehicles', function (Blueprint $table) use ($toDrop) {
-                $table->dropColumn(array_values($toDrop));
+        $eliminar = array_filter(['marca', 'modelo', 'estado', 'funcion'], fn($col) => Schema::hasColumn('vehicles', $col));
+        if ($eliminar) {
+            Schema::table('vehicles', function (Blueprint $table) use ($eliminar) {
+                $table->dropColumn(array_values($eliminar));
             });
         }
     }
@@ -129,32 +132,32 @@ return new class extends Migration
     {
         // Restaurar columnas string
         Schema::table('vehicles', function (Blueprint $table) {
-            $table->string('brand', 80)->nullable()->after('chassis_number');
-            $table->string('model', 80)->nullable()->after('brand');
-            $table->enum('status', [
+            $table->string('marca', 80)->nullable()->after('numero_chasis');
+            $table->string('modelo', 80)->nullable()->after('marca');
+            $table->enum('estado', [
                 'OPERATIVO', 'PANNE', 'MANTENIMIENTO',
                 'BAJA', 'FUERA_DE_SERVICIO', 'ENAJENADO',
-            ])->default('OPERATIVO')->after('model');
-            $table->string('function', 255)->nullable()->after('status');
+            ])->default('OPERATIVO')->after('modelo');
+            $table->string('funcion', 255)->nullable()->after('estado');
         });
 
         // Restaurar datos desde FKs
         DB::table('vehicles')->orderBy('id')->each(function ($v) {
-            $brand  = DB::table('brands')->where('id', $v->brand_id)->value('name');
-            $model  = DB::table('vehicle_models')->where('id', $v->vehicle_model_id)->value('name');
-            $status = DB::table('vehicle_statuses')->where('id', $v->vehicle_status_id)->value('code');
-            $fn     = DB::table('vehicle_functions')->where('id', $v->vehicle_function_id)->value('name');
+            $marca  = DB::table('brands')->where('id', $v->marca_id)->value('nombre');
+            $modelo = DB::table('vehicle_models')->where('id', $v->modelo_id)->value('nombre');
+            $estado = DB::table('vehicle_statuses')->where('id', $v->estado_vehiculo_id)->value('codigo');
+            $fn     = DB::table('vehicle_functions')->where('id', $v->funcion_id)->value('nombre');
             DB::table('vehicles')->where('id', $v->id)
-                ->update(compact('brand', 'model', 'status') + ['function' => $fn]);
+                ->update(compact('marca', 'modelo', 'estado') + ['funcion' => $fn]);
         });
 
         // Eliminar columnas FK
         Schema::table('vehicles', function (Blueprint $table) {
-            $table->dropForeign(['brand_id']);
-            $table->dropForeign(['vehicle_model_id']);
-            $table->dropForeign(['vehicle_status_id']);
-            $table->dropForeign(['vehicle_function_id']);
-            $table->dropColumn(['brand_id', 'vehicle_model_id', 'vehicle_status_id', 'vehicle_function_id']);
+            $table->dropForeign(['marca_id']);
+            $table->dropForeign(['modelo_id']);
+            $table->dropForeign(['estado_vehiculo_id']);
+            $table->dropForeign(['funcion_id']);
+            $table->dropColumn(['marca_id', 'modelo_id', 'estado_vehiculo_id', 'funcion_id']);
         });
     }
 };

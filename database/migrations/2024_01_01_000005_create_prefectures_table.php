@@ -10,12 +10,12 @@ return new class extends Migration
     {
         Schema::create('prefectures', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('zone_id')->nullable()->constrained()->nullOnDelete();
-            $table->string('name', 150)->unique();
+            $table->foreignId('zona_id')->nullable()->constrained('zones')->nullOnDelete();
+            $table->string('nombre', 150)->unique();
             $table->timestamps();
             $table->softDeletes();
 
-            $table->index('zone_id');
+            $table->index('zona_id');
         });
     }
 

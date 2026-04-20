@@ -15,9 +15,9 @@
             <div class="col-md-2">
                 <select name="status" class="form-select form-select-sm">
                     <option value="">— Estado —</option>
-                    @foreach($statuses as $s)
-                        <option value="{{ $s->code }}" {{ request('status') == $s->code ? 'selected' : '' }}>
-                            {{ $s->name }}
+                    @foreach($estados as $estado)
+                        <option value="{{ $estado->codigo }}" {{ request('status') == $estado->codigo ? 'selected' : '' }}>
+                            {{ $estado->nombre }}
                         </option>
                     @endforeach
                 </select>
@@ -40,7 +40,7 @@
 {{-- Tabla --}}
 <div class="card border-0 shadow-sm">
     <div class="card-header bg-white d-flex justify-content-between align-items-center py-2">
-        <span class="fw-semibold small">{{ $vehicles->total() }} vehículos encontrados</span>
+        <span class="fw-semibold small">{{ $vehiculos->total() }} vehículos encontrados</span>
     </div>
     <div class="table-responsive">
         <table class="table table-hover mb-0">
@@ -57,17 +57,17 @@
                 </tr>
             </thead>
             <tbody>
-                @forelse($vehicles as $v)
+                @forelse($vehiculos as $vehiculo)
                 <tr>
-                    <td class="fw-bold">{{ $v->patente }}</td>
-                    <td><small>{{ $v->vehicleType?->code }}</small></td>
-                    <td>{{ $v->brand?->name }} {{ $v->vehicleModel?->name }}</td>
-                    <td>{{ $v->year }}</td>
-                    <td><small>{{ $v->zone?->name ?? '—' }}</small></td>
-                    <td><small>{{ $v->prefecture?->name ?? '—' }}</small></td>
+                    <td class="fw-bold">{{ $vehiculo->patente }}</td>
+                    <td><small>{{ $vehiculo->tipoVehiculo?->codigo }}</small></td>
+                    <td>{{ $vehiculo->marca?->nombre }} {{ $vehiculo->modelo?->nombre }}</td>
+                    <td>{{ $vehiculo->anio }}</td>
+                    <td><small>{{ $vehiculo->zona?->nombre ?? '—' }}</small></td>
+                    <td><small>{{ $vehiculo->prefectura?->nombre ?? '—' }}</small></td>
                     <td>
                         @php
-                            $badgeColors = [
+                            $coloresEstado = [
                                 'OPERATIVO'         => 'success',
                                 'PANNE'             => 'danger',
                                 'MANTENIMIENTO'     => 'warning',
@@ -75,32 +75,32 @@
                                 'FUERA_DE_SERVICIO' => 'purple',
                                 'ENAJENADO'         => 'primary',
                             ];
-                            $bc = $badgeColors[$v->vehicleStatus?->code] ?? 'secondary';
+                            $colorEstado = $coloresEstado[$vehiculo->estadoVehiculo?->codigo] ?? 'secondary';
                         @endphp
-                        <span class="badge bg-{{ $bc }}">{{ $v->vehicleStatus?->name ?? '—' }}</span>
-                        @if($v->is_aggregated)
+                        <span class="badge bg-{{ $colorEstado }}">{{ $vehiculo->estadoVehiculo?->nombre ?? '—' }}</span>
+                        @if($vehiculo->es_agregado)
                             <span class="badge bg-info ms-1" title="Vehículo agregado">AGR</span>
                         @endif
                     </td>
                     <td class="text-center" style="white-space:nowrap">
                         {{-- Ver detalle --}}
-                        <a href="{{ route('vehicles.show', $v) }}"
+                        <a href="{{ route('vehicles.show', $vehiculo) }}"
                            class="btn btn-sm btn-outline-primary py-0 px-2"
                            title="Ver detalle">
                             <i class="bi bi-eye"></i>
                         </a>
                         {{-- Editar --}}
-                        <a href="{{ route('vehicles.edit', $v) }}"
+                        <a href="{{ route('vehicles.edit', $vehiculo) }}"
                            class="btn btn-sm btn-outline-warning py-0 px-2 ms-1"
                            title="Editar vehículo">
                             <i class="bi bi-pencil-fill"></i>
                         </a>
                         {{-- Eliminar --}}
                         <button type="button"
-                                class="btn btn-sm btn-outline-danger py-0 px-2 ms-1 btn-delete"
+                                class="btn btn-sm btn-outline-danger py-0 px-2 ms-1 btn-eliminar"
                                 title="Eliminar vehículo"
-                                data-id="{{ $v->id }}"
-                                data-patente="{{ $v->patente }}"
+                                data-id="{{ $vehiculo->id }}"
+                                data-patente="{{ $vehiculo->patente }}"
                                 data-bs-toggle="modal"
                                 data-bs-target="#modalEliminar">
                             <i class="bi bi-trash3"></i>
@@ -118,7 +118,7 @@
         </table>
     </div>
     <div class="card-footer bg-white">
-        {{ $vehicles->withQueryString()->links() }}
+        {{ $vehiculos->withQueryString()->links() }}
     </div>
 </div>
 
@@ -158,7 +158,7 @@
 
 @push('scripts')
 <script>
-document.querySelectorAll('.btn-delete').forEach(btn => {
+document.querySelectorAll('.btn-eliminar').forEach(btn => {
     btn.addEventListener('click', () => {
         document.getElementById('modalPatente').textContent = btn.dataset.patente;
         document.getElementById('formEliminar').action = `/vehicles/${btn.dataset.id}`;

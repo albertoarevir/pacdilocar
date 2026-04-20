@@ -13,36 +13,36 @@ return new class extends Migration
 
             // Identificación
             $table->string('patente', 20)->unique()->comment('Patente o sigla del vehículo');
-            $table->foreignId('vehicle_type_id')->constrained()->restrictOnDelete();
-            $table->string('brand', 80)->nullable();
-            $table->string('model', 80)->nullable();
+            $table->foreignId('tipo_vehiculo_id')->constrained('vehicle_types')->restrictOnDelete();
+            $table->string('marca', 80)->nullable();
+            $table->string('modelo', 80)->nullable();
             $table->foreignId('color_id')->nullable()->constrained()->nullOnDelete();
-            $table->unsignedSmallInteger('year')->nullable();
-            $table->date('service_start_date')->nullable()->comment('Fecha de alta en servicio');
-            $table->string('function', 255)->nullable()->comment('Función que desarrolla');
-            $table->foreignId('fuel_type_id')->nullable()->constrained()->nullOnDelete();
-            $table->string('engine_number', 100)->nullable();
-            $table->string('chassis_number', 100)->nullable();
-            $table->foreignId('funding_origin_id')->nullable()->constrained()->nullOnDelete();
+            $table->unsignedSmallInteger('anio')->nullable();
+            $table->date('fecha_inicio_servicio')->nullable()->comment('Fecha de alta en servicio');
+            $table->string('funcion', 255)->nullable()->comment('Función que desarrolla');
+            $table->foreignId('tipo_combustible_id')->nullable()->constrained('fuel_types')->nullOnDelete();
+            $table->string('numero_motor', 100)->nullable();
+            $table->string('numero_chasis', 100)->nullable();
+            $table->foreignId('origen_financiamiento_id')->nullable()->constrained('funding_origins')->nullOnDelete();
 
             // Ubicación asignada
-            $table->foreignId('zone_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('zona_id')->nullable()->constrained('zones')->nullOnDelete();
             $table->foreignId('province_id')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('municipality_id')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('prefecture_id')->nullable()->constrained()->nullOnDelete()
+            $table->foreignId('municipio_id')->nullable()->constrained('municipalities')->nullOnDelete();
+            $table->foreignId('prefectura_id')->nullable()->constrained('prefectures')->nullOnDelete()
                 ->comment('Prefectura asignada');
-            $table->foreignId('unit_id')->nullable()->constrained()->nullOnDelete()
+            $table->foreignId('unidad_id')->nullable()->constrained('units')->nullOnDelete()
                 ->comment('Unidad asignada');
 
             // Agregación (vehículo prestado a otra unidad)
-            $table->boolean('is_aggregated')->default(false);
-            $table->foreignId('aggregate_prefecture_id')->nullable()
+            $table->boolean('es_agregado')->default(false);
+            $table->foreignId('prefectura_agregado_id')->nullable()
                 ->constrained('prefectures')->nullOnDelete();
-            $table->foreignId('aggregate_unit_id')->nullable()
+            $table->foreignId('unidad_agregado_id')->nullable()
                 ->constrained('units')->nullOnDelete();
 
             // Estado operativo
-            $table->enum('status', [
+            $table->enum('estado', [
                 'OPERATIVO',
                 'PANNE',
                 'MANTENIMIENTO',
@@ -51,14 +51,14 @@ return new class extends Migration
                 'ENAJENADO',
             ])->default('OPERATIVO')->index();
 
-            $table->text('observations')->nullable();
+            $table->text('observaciones')->nullable();
             $table->timestamps();
             $table->softDeletes();
 
-            $table->index('vehicle_type_id');
-            $table->index('prefecture_id');
-            $table->index('unit_id');
-            $table->index('zone_id');
+            $table->index('tipo_vehiculo_id');
+            $table->index('prefectura_id');
+            $table->index('unidad_id');
+            $table->index('zona_id');
         });
     }
 

@@ -11,10 +11,10 @@ return new class extends Migration
         Schema::create('provinces', function (Blueprint $table) {
             $table->id();
             $table->foreignId('region_id')->constrained()->restrictOnDelete();
-            $table->string('name', 100);
+            $table->string('nombre', 100);
             $table->timestamps();
 
-            $table->unique(['region_id', 'name']);
+            $table->unique(['region_id', 'nombre']);
             $table->index('region_id');
         });
     }

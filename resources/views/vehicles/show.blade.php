@@ -10,25 +10,25 @@
         <div class="card border-0 shadow-sm p-3">
             <h6 class="fw-bold mb-3">Identificación</h6>
             @php
-                $statusColors = ['OPERATIVO'=>'success','PANNE'=>'danger','MANTENIMIENTO'=>'warning',
+                $coloresEstado = ['OPERATIVO'=>'success','PANNE'=>'danger','MANTENIMIENTO'=>'warning',
                                  'BAJA'=>'secondary','FUERA_DE_SERVICIO'=>'purple','ENAJENADO'=>'primary'];
-                $statusCode   = $vehicle->vehicleStatus?->code;
+                $codigoEstado  = $vehicle->estadoVehiculo?->codigo;
             @endphp
-            <span class="badge bg-{{ $statusColors[$statusCode] ?? 'secondary' }} mb-3 fs-6">
-                {{ $vehicle->vehicleStatus?->name ?? '—' }}
+            <span class="badge bg-{{ $coloresEstado[$codigoEstado] ?? 'secondary' }} mb-3 fs-6">
+                {{ $vehicle->estadoVehiculo?->nombre ?? '—' }}
             </span>
             <table class="table table-sm small mb-0">
                 <tr><th>Patente</th><td>{{ $vehicle->patente }}</td></tr>
-                <tr><th>Tipo</th><td>{{ $vehicle->vehicleType?->name ?? '—' }}</td></tr>
-                <tr><th>Marca</th><td>{{ $vehicle->brand?->name ?? '—' }}</td></tr>
-                <tr><th>Modelo</th><td>{{ $vehicle->vehicleModel?->name ?? '—' }}</td></tr>
-                <tr><th>Año</th><td>{{ $vehicle->year ?? '—' }}</td></tr>
-                <tr><th>Color</th><td>{{ $vehicle->color?->name ?? '—' }}</td></tr>
-                <tr><th>Combustible</th><td>{{ $vehicle->fuelType?->name ?? '—' }}</td></tr>
-                <tr><th>Alta Servicio</th><td>{{ $vehicle->service_start_date?->format('d/m/Y') ?? '—' }}</td></tr>
-                <tr><th>Origen</th><td>{{ $vehicle->fundingOrigin?->name ?? '—' }}</td></tr>
-                @if($vehicle->is_aggregated)
-                <tr class="table-info"><th>Agregado a</th><td>{{ $vehicle->aggregatePrefecture?->name ?? '—' }}</td></tr>
+                <tr><th>Tipo</th><td>{{ $vehicle->tipoVehiculo?->nombre ?? '—' }}</td></tr>
+                <tr><th>Marca</th><td>{{ $vehicle->marca?->nombre ?? '—' }}</td></tr>
+                <tr><th>Modelo</th><td>{{ $vehicle->modelo?->nombre ?? '—' }}</td></tr>
+                <tr><th>Año</th><td>{{ $vehicle->anio ?? '—' }}</td></tr>
+                <tr><th>Color</th><td>{{ $vehicle->color?->nombre ?? '—' }}</td></tr>
+                <tr><th>Combustible</th><td>{{ $vehicle->tipoCombustible?->nombre ?? '—' }}</td></tr>
+                <tr><th>Alta Servicio</th><td>{{ $vehicle->fecha_inicio_servicio?->format('d/m/Y') ?? '—' }}</td></tr>
+                <tr><th>Origen</th><td>{{ $vehicle->origenFinanciamiento?->nombre ?? '—' }}</td></tr>
+                @if($vehicle->es_agregado)
+                <tr class="table-info"><th>Agregado a</th><td>{{ $vehicle->prefecturaAgregado?->nombre ?? '—' }}</td></tr>
                 @endif
             </table>
         </div>
@@ -39,40 +39,40 @@
         <div class="card border-0 shadow-sm p-3 mb-3">
             <h6 class="fw-bold mb-3">Ubicación Asignada</h6>
             <table class="table table-sm small mb-0">
-                <tr><th>Zona</th><td>{{ $vehicle->zone?->name ?? '—' }}</td></tr>
-                <tr><th>Provincia</th><td>{{ $vehicle->province?->name ?? '—' }}</td></tr>
-                <tr><th>Comuna</th><td>{{ $vehicle->municipality?->name ?? '—' }}</td></tr>
-                <tr><th>Prefectura</th><td>{{ $vehicle->prefecture?->name ?? '—' }}</td></tr>
-                <tr><th>Unidad</th><td>{{ $vehicle->unit?->name ?? '—' }}</td></tr>
+                <tr><th>Zona</th><td>{{ $vehicle->zona?->nombre ?? '—' }}</td></tr>
+                <tr><th>Provincia</th><td>{{ $vehicle->provincia?->nombre ?? '—' }}</td></tr>
+                <tr><th>Comuna</th><td>{{ $vehicle->municipio?->nombre ?? '—' }}</td></tr>
+                <tr><th>Prefectura</th><td>{{ $vehicle->prefectura?->nombre ?? '—' }}</td></tr>
+                <tr><th>Unidad</th><td>{{ $vehicle->unidad?->nombre ?? '—' }}</td></tr>
             </table>
         </div>
 
         {{-- KPIs operativos --}}
-        @if($vehicle->operationalSummary)
+        @if($vehicle->resumenOperativo)
         <div class="card border-0 shadow-sm p-3">
             <h6 class="fw-bold mb-3">📊 Indicadores Operativos</h6>
-            @php $s = $vehicle->operationalSummary @endphp
+            @php $resumen = $vehicle->resumenOperativo @endphp
             <div class="mb-2">
                 <small class="text-muted">Disponibilidad</small>
                 <div class="progress mb-1" style="height:10px">
-                    <div class="progress-bar bg-success" style="width:{{ $s->availability_pct * 100 }}%"></div>
+                    <div class="progress-bar bg-success" style="width:{{ $resumen->pct_disponibilidad * 100 }}%"></div>
                 </div>
-                <small class="fw-bold">{{ round($s->availability_pct * 100, 2) }}%</small>
+                <small class="fw-bold">{{ round($resumen->pct_disponibilidad * 100, 2) }}%</small>
             </div>
             <div class="mb-2">
-                <small class="text-muted">Downtime</small>
+                <small class="text-muted">Paralizado</small>
                 <div class="progress mb-1" style="height:10px">
-                    <div class="progress-bar bg-danger" style="width:{{ $s->downtime_pct * 100 }}%"></div>
+                    <div class="progress-bar bg-danger" style="width:{{ $resumen->pct_paralizado * 100 }}%"></div>
                 </div>
-                <small class="fw-bold text-danger">{{ round($s->downtime_pct * 100, 2) }}%</small>
+                <small class="fw-bold text-danger">{{ round($resumen->pct_paralizado * 100, 2) }}%</small>
             </div>
             <table class="table table-sm small mb-0 mt-2">
-                <tr><th>Días en servicio</th><td>{{ number_format($s->total_service_days) }}</td></tr>
-                <tr><th>Días en taller</th><td>{{ number_format($s->total_workshop_days) }}</td></tr>
-                <tr><th>Días operativos</th><td>{{ number_format($s->operational_days) }}</td></tr>
-                <tr><th>Ingresos a taller</th><td>{{ $s->workshop_entries }}</td></tr>
-                <tr><th>MTTR (días prom.)</th><td>{{ $s->mttr_days }}</td></tr>
-                <tr><th>Costo total mant.</th><td>${{ number_format($s->total_maintenance_cost, 0, ',', '.') }}</td></tr>
+                <tr><th>Días en servicio</th><td>{{ number_format($resumen->dias_servicio_total) }}</td></tr>
+                <tr><th>Días en taller</th><td>{{ number_format($resumen->dias_taller_total) }}</td></tr>
+                <tr><th>Días operativos</th><td>{{ number_format($resumen->dias_operativos) }}</td></tr>
+                <tr><th>Ingresos a taller</th><td>{{ $resumen->ingresos_taller }}</td></tr>
+                <tr><th>MTTR (días prom.)</th><td>{{ $resumen->dias_mttr }}</td></tr>
+                <tr><th>Costo total mant.</th><td>${{ number_format($resumen->costo_mantenimiento_total, 0, ',', '.') }}</td></tr>
             </table>
         </div>
         @endif
@@ -81,23 +81,23 @@
     {{-- Historial mantenimiento --}}
     <div class="col-md-4">
         <div class="card border-0 shadow-sm p-3">
-            <h6 class="fw-bold mb-3">🔧 Historial Taller ({{ $vehicle->maintenanceRecords->count() }})</h6>
-            @forelse($vehicle->maintenanceRecords->sortByDesc('entry_date') as $m)
+            <h6 class="fw-bold mb-3">🔧 Historial Taller ({{ $vehicle->registrosMantenimiento->count() }})</h6>
+            @forelse($vehicle->registrosMantenimiento->sortByDesc('fecha_ingreso') as $registro)
             <div class="border rounded p-2 mb-2 small">
                 <div class="d-flex justify-content-between">
-                    <span class="fw-bold">{{ $m->entry_date?->format('d/m/Y') }}</span>
+                    <span class="fw-bold">{{ $registro->fecha_ingreso?->format('d/m/Y') }}</span>
                     <span class="badge
-                        {{ $m->record_status == 'Cerrado' ? 'bg-success' : ($m->record_status == 'Abierto' ? 'bg-danger' : 'bg-warning') }}">
-                        {{ $m->record_status }}
+                        {{ $registro->estado == 'Cerrado' ? 'bg-success' : ($registro->estado == 'Abierto' ? 'bg-danger' : 'bg-warning') }}">
+                        {{ $registro->estado }}
                     </span>
                 </div>
-                <div>{{ $m->maintenanceCategory?->name ?? 'Sin categoría' }} — <em>{{ $m->maintenance_type }}</em></div>
-                @if($m->technical_description)
-                <div class="text-muted">{{ Str::limit($m->technical_description, 60) }}</div>
+                <div>{{ $registro->categoriaMantenimiento?->nombre ?? 'Sin categoría' }} — <em>{{ $registro->tipo_mantenimiento }}</em></div>
+                @if($registro->descripcion_tecnica)
+                <div class="text-muted">{{ Str::limit($registro->descripcion_tecnica, 60) }}</div>
                 @endif
                 <div class="d-flex justify-content-between mt-1">
-                    <span>{{ $m->downtime_days ?? '?' }} días</span>
-                    <span>${{ number_format($m->total_cost, 0, ',', '.') }}</span>
+                    <span>{{ $registro->dias_paralizado ?? '?' }} días</span>
+                    <span>${{ number_format($registro->costo_total, 0, ',', '.') }}</span>
                 </div>
             </div>
             @empty

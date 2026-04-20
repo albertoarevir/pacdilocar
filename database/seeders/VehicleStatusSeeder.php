@@ -9,19 +9,19 @@ class VehicleStatusSeeder extends Seeder
 {
     public function run(): void
     {
-        $statuses = [
-            ['code' => 'OPERATIVO',        'name' => 'Operativo',          'description' => 'Vehículo en servicio normal',                  'generates_downtime' => false, 'sort_order' => 1],
-            ['code' => 'PANNE',            'name' => 'En Panne',           'description' => 'Vehículo averiado, genera tiempo de baja',      'generates_downtime' => true,  'sort_order' => 2],
-            ['code' => 'MANTENIMIENTO',    'name' => 'En Mantenimiento',   'description' => 'Vehículo en taller por mantenimiento preventivo','generates_downtime' => false, 'sort_order' => 3],
-            ['code' => 'BAJA',             'name' => 'De Baja',            'description' => 'Vehículo dado de baja definitivamente',         'generates_downtime' => false, 'sort_order' => 4],
-            ['code' => 'FUERA_DE_SERVICIO','name' => 'Fuera de Servicio',  'description' => 'Vehículo temporalmente fuera de servicio',      'generates_downtime' => false, 'sort_order' => 5],
-            ['code' => 'ENAJENADO',        'name' => 'Enajenado',          'description' => 'Vehículo transferido o vendido',                'generates_downtime' => false, 'sort_order' => 6],
+        $estados = [
+            ['codigo' => 'OPERATIVO',        'nombre' => 'Operativo',          'descripcion' => 'Vehículo en servicio normal',                  'genera_paralizado' => false, 'orden' => 1],
+            ['codigo' => 'PANNE',            'nombre' => 'En Panne',           'descripcion' => 'Vehículo averiado, genera tiempo de baja',      'genera_paralizado' => true,  'orden' => 2],
+            ['codigo' => 'MANTENIMIENTO',    'nombre' => 'En Mantenimiento',   'descripcion' => 'Vehículo en taller por mantenimiento preventivo','genera_paralizado' => false, 'orden' => 3],
+            ['codigo' => 'BAJA',             'nombre' => 'De Baja',            'descripcion' => 'Vehículo dado de baja definitivamente',         'genera_paralizado' => false, 'orden' => 4],
+            ['codigo' => 'FUERA_DE_SERVICIO','nombre' => 'Fuera de Servicio',  'descripcion' => 'Vehículo temporalmente fuera de servicio',      'genera_paralizado' => false, 'orden' => 5],
+            ['codigo' => 'ENAJENADO',        'nombre' => 'Enajenado',          'descripcion' => 'Vehículo transferido o vendido',                'genera_paralizado' => false, 'orden' => 6],
         ];
 
-        foreach ($statuses as $status) {
+        foreach ($estados as $estado) {
             DB::table('vehicle_statuses')->updateOrInsert(
-                ['code' => $status['code']],
-                array_merge($status, ['created_at' => now(), 'updated_at' => now()])
+                ['codigo' => $estado['codigo']],
+                array_merge($estado, ['created_at' => now(), 'updated_at' => now()])
             );
         }
     }

@@ -11,25 +11,25 @@ class Prefecture extends Model
 {
     use SoftDeletes;
 
-    protected $fillable = ['zone_id', 'name'];
+    protected $fillable = ['zona_id', 'nombre'];
 
-    public function zone(): BelongsTo
+    public function zona(): BelongsTo
     {
-        return $this->belongsTo(Zone::class);
+        return $this->belongsTo(Zone::class, 'zona_id');
     }
 
-    public function units(): HasMany
+    public function unidades(): HasMany
     {
-        return $this->hasMany(Unit::class);
+        return $this->hasMany(Unit::class, 'prefectura_id');
     }
 
-    public function vehicles(): HasMany
+    public function vehiculos(): HasMany
     {
-        return $this->hasMany(Vehicle::class);
+        return $this->hasMany(Vehicle::class, 'prefectura_id');
     }
 
-    public function aggregatedVehicles(): HasMany
+    public function vehiculosAgregados(): HasMany
     {
-        return $this->hasMany(Vehicle::class, 'aggregate_prefecture_id');
+        return $this->hasMany(Vehicle::class, 'prefectura_agregado_id');
     }
 }

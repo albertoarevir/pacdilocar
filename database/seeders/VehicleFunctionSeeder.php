@@ -9,17 +9,17 @@ class VehicleFunctionSeeder extends Seeder
 {
     public function run(): void
     {
-        $functions = [
+        $funciones = [
             'COMANDO',
             'POLICIAL',
             'APOYO TÁCTICO',
             'APOYO LOGÍSTICO',
         ];
 
-        foreach ($functions as $name) {
+        foreach ($funciones as $nombre) {
             DB::table('vehicle_functions')->updateOrInsert(
-                ['name' => $name],
-                ['name' => $name, 'created_at' => now(), 'updated_at' => now()]
+                ['nombre' => $nombre],
+                ['nombre' => $nombre, 'created_at' => now(), 'updated_at' => now()]
             );
         }
     }

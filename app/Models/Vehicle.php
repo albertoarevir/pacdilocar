@@ -13,44 +13,44 @@ class Vehicle extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'patente', 'vehicle_type_id', 'brand_id', 'vehicle_model_id', 'color_id', 'year',
-        'service_start_date', 'vehicle_function_id', 'fuel_type_id', 'engine_number',
-        'chassis_number', 'funding_origin_id', 'zone_id', 'province_id',
-        'municipality_id', 'prefecture_id', 'unit_id', 'is_aggregated',
-        'aggregate_prefecture_id', 'aggregate_unit_id', 'vehicle_status_id', 'observations',
+        'patente', 'tipo_vehiculo_id', 'marca_id', 'modelo_id', 'color_id', 'anio',
+        'fecha_inicio_servicio', 'funcion_id', 'tipo_combustible_id', 'numero_motor',
+        'numero_chasis', 'origen_financiamiento_id', 'zona_id', 'province_id',
+        'municipio_id', 'prefectura_id', 'unidad_id', 'es_agregado',
+        'prefectura_agregado_id', 'unidad_agregado_id', 'estado_vehiculo_id', 'observaciones',
     ];
 
     protected $casts = [
-        'service_start_date' => 'date',
-        'is_aggregated'      => 'boolean',
-        'year'               => 'integer',
+        'fecha_inicio_servicio' => 'date',
+        'es_agregado'           => 'boolean',
+        'anio'                  => 'integer',
     ];
 
     // ─── Relaciones ──────────────────────────────────────────────────────────
 
-    public function vehicleType(): BelongsTo
+    public function tipoVehiculo(): BelongsTo
     {
-        return $this->belongsTo(VehicleType::class);
+        return $this->belongsTo(VehicleType::class, 'tipo_vehiculo_id');
     }
 
-    public function brand(): BelongsTo
+    public function marca(): BelongsTo
     {
-        return $this->belongsTo(Brand::class);
+        return $this->belongsTo(Brand::class, 'marca_id');
     }
 
-    public function vehicleModel(): BelongsTo
+    public function modelo(): BelongsTo
     {
-        return $this->belongsTo(VehicleModel::class);
+        return $this->belongsTo(VehicleModel::class, 'modelo_id');
     }
 
-    public function vehicleStatus(): BelongsTo
+    public function estadoVehiculo(): BelongsTo
     {
-        return $this->belongsTo(VehicleStatus::class);
+        return $this->belongsTo(VehicleStatus::class, 'estado_vehiculo_id');
     }
 
-    public function vehicleFunction(): BelongsTo
+    public function funcion(): BelongsTo
     {
-        return $this->belongsTo(VehicleFunction::class);
+        return $this->belongsTo(VehicleFunction::class, 'funcion_id');
     }
 
     public function color(): BelongsTo
@@ -58,117 +58,117 @@ class Vehicle extends Model
         return $this->belongsTo(Color::class);
     }
 
-    public function fuelType(): BelongsTo
+    public function tipoCombustible(): BelongsTo
     {
-        return $this->belongsTo(FuelType::class);
+        return $this->belongsTo(FuelType::class, 'tipo_combustible_id');
     }
 
-    public function fundingOrigin(): BelongsTo
+    public function origenFinanciamiento(): BelongsTo
     {
-        return $this->belongsTo(FundingOrigin::class);
+        return $this->belongsTo(FundingOrigin::class, 'origen_financiamiento_id');
     }
 
-    public function zone(): BelongsTo
+    public function zona(): BelongsTo
     {
-        return $this->belongsTo(Zone::class);
+        return $this->belongsTo(Zone::class, 'zona_id');
     }
 
-    public function province(): BelongsTo
+    public function provincia(): BelongsTo
     {
-        return $this->belongsTo(Province::class);
+        return $this->belongsTo(Province::class, 'province_id');
     }
 
-    public function municipality(): BelongsTo
+    public function municipio(): BelongsTo
     {
-        return $this->belongsTo(Municipality::class);
+        return $this->belongsTo(Municipality::class, 'municipio_id');
     }
 
-    public function prefecture(): BelongsTo
+    public function prefectura(): BelongsTo
     {
-        return $this->belongsTo(Prefecture::class);
+        return $this->belongsTo(Prefecture::class, 'prefectura_id');
     }
 
-    public function unit(): BelongsTo
+    public function unidad(): BelongsTo
     {
-        return $this->belongsTo(Unit::class);
+        return $this->belongsTo(Unit::class, 'unidad_id');
     }
 
-    public function aggregatePrefecture(): BelongsTo
+    public function prefecturaAgregado(): BelongsTo
     {
-        return $this->belongsTo(Prefecture::class, 'aggregate_prefecture_id');
+        return $this->belongsTo(Prefecture::class, 'prefectura_agregado_id');
     }
 
-    public function aggregateUnit(): BelongsTo
+    public function unidadAgregado(): BelongsTo
     {
-        return $this->belongsTo(Unit::class, 'aggregate_unit_id');
+        return $this->belongsTo(Unit::class, 'unidad_agregado_id');
     }
 
-    public function maintenanceRecords(): HasMany
+    public function registrosMantenimiento(): HasMany
     {
-        return $this->hasMany(MaintenanceRecord::class);
+        return $this->hasMany(MaintenanceRecord::class, 'vehiculo_id');
     }
 
-    public function openMaintenanceRecords(): HasMany
+    public function registrosMantenimientoAbiertos(): HasMany
     {
-        return $this->hasMany(MaintenanceRecord::class)
-            ->whereIn('record_status', ['Abierto', 'En Diagnóstico']);
+        return $this->hasMany(MaintenanceRecord::class, 'vehiculo_id')
+            ->whereIn('estado', ['Abierto', 'En Diagnóstico']);
     }
 
-    public function operationalSummary(): HasOne
+    public function resumenOperativo(): HasOne
     {
-        return $this->hasOne(OperationalSummary::class);
+        return $this->hasOne(OperationalSummary::class, 'vehiculo_id');
     }
 
     // ─── Scopes ──────────────────────────────────────────────────────────────
 
     public function scopeOperativo($query)
     {
-        return $query->whereHas('vehicleStatus', fn($q) => $q->where('code', 'OPERATIVO'));
+        return $query->whereHas('estadoVehiculo', fn($q) => $q->where('codigo', 'OPERATIVO'));
     }
 
     public function scopeEnPanne($query)
     {
-        return $query->whereHas('vehicleStatus', fn($q) => $q->where('code', 'PANNE'));
+        return $query->whereHas('estadoVehiculo', fn($q) => $q->where('codigo', 'PANNE'));
     }
 
     public function scopeActivos($query)
     {
-        return $query->whereHas('vehicleStatus', fn($q) => $q->whereNotIn('code', ['BAJA', 'ENAJENADO']));
+        return $query->whereHas('estadoVehiculo', fn($q) => $q->whereNotIn('codigo', ['BAJA', 'ENAJENADO']));
     }
 
-    public function scopeByZone($query, int $zoneId)
+    public function scopePorZona($query, int $zonaId)
     {
-        return $query->where('zone_id', $zoneId);
+        return $query->where('zona_id', $zonaId);
     }
 
-    public function scopeByPrefecture($query, int $prefectureId)
+    public function scopePorPrefectura($query, int $prefecturaId)
     {
-        return $query->where('prefecture_id', $prefectureId);
+        return $query->where('prefectura_id', $prefecturaId);
     }
 
     // ─── Accessors ───────────────────────────────────────────────────────────
 
-    public function getIsAvailableAttribute(): bool
+    public function getEstaDisponibleAttribute(): bool
     {
-        return $this->vehicleStatus?->code === 'OPERATIVO';
+        return $this->estadoVehiculo?->codigo === 'OPERATIVO';
     }
 
-    public function getIsGeneratingDowntimeAttribute(): bool
+    public function getGeneraParalizadoAttribute(): bool
     {
-        return (bool) $this->vehicleStatus?->generates_downtime;
+        return (bool) $this->estadoVehiculo?->genera_paralizado;
     }
 
-    public function getServiceDaysAttribute(): int
+    public function getDiasServicioAttribute(): int
     {
-        if (! $this->service_start_date) {
+        if (! $this->fecha_inicio_servicio) {
             return 0;
         }
 
-        $statusCode = $this->vehicleStatus?->code;
-        $end = in_array($statusCode, ['BAJA', 'ENAJENADO'])
+        $codigoEstado = $this->estadoVehiculo?->codigo;
+        $fin = in_array($codigoEstado, ['BAJA', 'ENAJENADO'])
             ? $this->updated_at->toDateString()
             : now()->toDateString();
 
-        return $this->service_start_date->diffInDays($end);
+        return $this->fecha_inicio_servicio->diffInDays($fin);
     }
 }

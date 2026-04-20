@@ -15,43 +15,43 @@ class VehicleFactory extends Factory
 
     public function definition(): array
     {
-        $brands = ['Toyota', 'Ford', 'Nissan', 'Chevrolet', 'Hyundai', 'Kia', 'Mitsubishi', 'Volkswagen'];
-        $models = ['Hilux', 'Ranger', 'Transit', 'Navara', 'D-MAX', 'Accent', 'Sprinter', 'Amarok'];
+        $marcas  = ['Toyota', 'Ford', 'Nissan', 'Chevrolet', 'Hyundai', 'Kia', 'Mitsubishi', 'Volkswagen'];
+        $modelos = ['Hilux', 'Ranger', 'Transit', 'Navara', 'D-MAX', 'Accent', 'Sprinter', 'Amarok'];
 
         return [
-            'patente'            => strtoupper($this->faker->unique()->bothify('??-####')),
-            'vehicle_type_id'    => VehicleType::inRandomOrder()->first()?->id
-                                    ?? VehicleType::factory()->create()->id,
-            'brand'              => $this->faker->randomElement($brands),
-            'model'              => $this->faker->randomElement($models),
-            'color_id'           => Color::inRandomOrder()->first()?->id,
-            'year'               => $this->faker->numberBetween(2015, 2024),
-            'service_start_date' => $this->faker->dateTimeBetween('-5 years', 'now'),
-            'fuel_type_id'       => FuelType::inRandomOrder()->first()?->id,
-            'engine_number'      => strtoupper($this->faker->bothify('??######')),
-            'chassis_number'     => strtoupper($this->faker->bothify('?####??####')),
-            'funding_origin_id'  => FundingOrigin::inRandomOrder()->first()?->id,
-            'status'             => $this->faker->randomElement([
-                'OPERATIVO', 'OPERATIVO', 'OPERATIVO', // ponderado hacia operativo
+            'patente'               => strtoupper($this->faker->unique()->bothify('??-####')),
+            'tipo_vehiculo_id'      => VehicleType::inRandomOrder()->first()?->id
+                                       ?? VehicleType::factory()->create()->id,
+            'marca'                 => $this->faker->randomElement($marcas),
+            'modelo'                => $this->faker->randomElement($modelos),
+            'color_id'              => Color::inRandomOrder()->first()?->id,
+            'anio'                  => $this->faker->numberBetween(2015, 2024),
+            'fecha_inicio_servicio' => $this->faker->dateTimeBetween('-5 years', 'now'),
+            'tipo_combustible_id'   => FuelType::inRandomOrder()->first()?->id,
+            'numero_motor'          => strtoupper($this->faker->bothify('??######')),
+            'numero_chasis'         => strtoupper($this->faker->bothify('?####??####')),
+            'origen_financiamiento_id' => FundingOrigin::inRandomOrder()->first()?->id,
+            'estado'                => $this->faker->randomElement([
+                'OPERATIVO', 'OPERATIVO', 'OPERATIVO',
                 'PANNE', 'MANTENIMIENTO', 'BAJA',
             ]),
-            'is_aggregated'      => $this->faker->boolean(20),
-            'observations'       => $this->faker->optional()->sentence(),
+            'es_agregado'           => $this->faker->boolean(20),
+            'observaciones'         => $this->faker->optional()->sentence(),
         ];
     }
 
     public function operativo(): static
     {
-        return $this->state(['status' => 'OPERATIVO']);
+        return $this->state(['estado' => 'OPERATIVO']);
     }
 
     public function enPanne(): static
     {
-        return $this->state(['status' => 'PANNE']);
+        return $this->state(['estado' => 'PANNE']);
     }
 
     public function enMantenimiento(): static
     {
-        return $this->state(['status' => 'MANTENIMIENTO']);
+        return $this->state(['estado' => 'MANTENIMIENTO']);
     }
 }

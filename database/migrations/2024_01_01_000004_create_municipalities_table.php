@@ -11,13 +11,13 @@ return new class extends Migration
         Schema::create('municipalities', function (Blueprint $table) {
             $table->id();
             $table->foreignId('province_id')->constrained()->restrictOnDelete();
-            $table->foreignId('zone_id')->nullable()->constrained()->nullOnDelete();
-            $table->string('name', 100);
+            $table->foreignId('zona_id')->nullable()->constrained('zones')->nullOnDelete();
+            $table->string('nombre', 100);
             $table->timestamps();
 
-            $table->unique(['province_id', 'name']);
+            $table->unique(['province_id', 'nombre']);
             $table->index('province_id');
-            $table->index('zone_id');
+            $table->index('zona_id');
         });
     }
 

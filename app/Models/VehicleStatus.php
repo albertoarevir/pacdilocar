@@ -7,14 +7,14 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class VehicleStatus extends Model
 {
-    protected $fillable = ['code', 'name', 'description', 'generates_downtime', 'sort_order'];
+    protected $fillable = ['codigo', 'nombre', 'descripcion', 'genera_paralizado', 'orden'];
 
     protected $casts = [
-        'generates_downtime' => 'boolean',
+        'genera_paralizado' => 'boolean',
     ];
 
-    public function vehicles(): HasMany
+    public function vehiculos(): HasMany
     {
-        return $this->hasMany(Vehicle::class);
+        return $this->hasMany(Vehicle::class, 'estado_vehiculo_id');
     }
 }

@@ -11,20 +11,20 @@ class Workshop extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'type', 'name', 'address', 'phone', 'contact_person', 'is_active',
+        'tipo', 'nombre', 'direccion', 'telefono', 'persona_contacto', 'activo',
     ];
 
     protected $casts = [
-        'is_active' => 'boolean',
+        'activo' => 'boolean',
     ];
 
-    public function maintenanceRecords(): HasMany
+    public function registrosMantenimiento(): HasMany
     {
-        return $this->hasMany(MaintenanceRecord::class);
+        return $this->hasMany(MaintenanceRecord::class, 'taller_id');
     }
 
-    public function scopeActive($query)
+    public function scopeActivos($query)
     {
-        return $query->where('is_active', true);
+        return $query->where('activo', true);
     }
 }

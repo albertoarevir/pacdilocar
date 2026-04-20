@@ -14,50 +14,50 @@ class MaintenanceRecordFactory extends Factory
 
     public function definition(): array
     {
-        $entryDate = $this->faker->dateTimeBetween('-2 years', '-1 day');
-        $isClosed  = $this->faker->boolean(60);
-        $exitDate  = $isClosed
-            ? $this->faker->dateTimeBetween($entryDate, 'now')
+        $fechaIngreso = $this->faker->dateTimeBetween('-2 years', '-1 day');
+        $cerrado      = $this->faker->boolean(60);
+        $fechaSalida  = $cerrado
+            ? $this->faker->dateTimeBetween($fechaIngreso, 'now')
             : null;
 
-        $downtimeDays = $exitDate
-            ? (int) \Carbon\Carbon::parse($entryDate)->diffInDays($exitDate)
+        $diasParalizado = $fechaSalida
+            ? (int) \Carbon\Carbon::parse($fechaIngreso)->diffInDays($fechaSalida)
             : null;
 
         return [
-            'vehicle_id'              => Vehicle::inRandomOrder()->first()?->id
-                                         ?? Vehicle::factory()->create()->id,
-            'maintenance_category_id' => MaintenanceCategory::inRandomOrder()->first()?->id,
-            'workshop_id'             => Workshop::inRandomOrder()->first()?->id,
-            'entry_date'              => $entryDate,
-            'exit_date'               => $exitDate,
-            'downtime_days'           => $downtimeDays,
-            'record_status'           => $isClosed
+            'vehiculo_id'          => Vehicle::inRandomOrder()->first()?->id
+                                      ?? Vehicle::factory()->create()->id,
+            'categoria_id'         => MaintenanceCategory::inRandomOrder()->first()?->id,
+            'taller_id'            => Workshop::inRandomOrder()->first()?->id,
+            'fecha_ingreso'        => $fechaIngreso,
+            'fecha_salida'         => $fechaSalida,
+            'dias_paralizado'      => $diasParalizado,
+            'estado'               => $cerrado
                 ? 'Cerrado'
                 : $this->faker->randomElement(['Abierto', 'En Diagnóstico']),
-            'maintenance_type'        => $this->faker->randomElement([
+            'tipo_mantenimiento'   => $this->faker->randomElement([
                 'Correctivo', 'Correctivo', 'Preventivo', 'Emergencia',
             ]),
-            'technical_description'   => $this->faker->optional()->sentence(10),
-            'total_cost'              => $this->faker->numberBetween(50000, 2000000),
-            'mileage_entry'           => $this->faker->optional()->numberBetween(5000, 200000),
-            'work_order_number'       => 'OT-' . $this->faker->unique()->numerify('####-###'),
-            'observations'            => $this->faker->optional()->sentence(),
+            'descripcion_tecnica'  => $this->faker->optional()->sentence(10),
+            'costo_total'          => $this->faker->numberBetween(50000, 2000000),
+            'kilometraje_ingreso'  => $this->faker->optional()->numberBetween(5000, 200000),
+            'numero_orden'         => 'OT-' . $this->faker->unique()->numerify('####-###'),
+            'observaciones'        => $this->faker->optional()->sentence(),
         ];
     }
 
     public function abierto(): static
     {
-        return $this->state(['record_status' => 'Abierto', 'exit_date' => null, 'downtime_days' => null]);
+        return $this->state(['estado' => 'Abierto', 'fecha_salida' => null, 'dias_paralizado' => null]);
     }
 
     public function cerrado(): static
     {
-        return $this->afterMaking(function (MaintenanceRecord $record) {
-            $exit = $this->faker->dateTimeBetween($record->entry_date, 'now');
-            $record->exit_date    = $exit;
-            $record->downtime_days = (int) \Carbon\Carbon::parse($record->entry_date)->diffInDays($exit);
-            $record->record_status = 'Cerrado';
+        return $this->afterMaking(function (MaintenanceRecord $registro) {
+            $salida = $this->faker->dateTimeBetween($registro->fecha_ingreso, 'now');
+            $registro->fecha_salida    = $salida;
+            $registro->dias_paralizado = (int) \Carbon\Carbon::parse($registro->fecha_ingreso)->diffInDays($salida);
+            $registro->estado          = 'Cerrado';
         });
     }
 }

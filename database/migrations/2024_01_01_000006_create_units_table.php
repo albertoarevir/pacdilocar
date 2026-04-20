@@ -10,20 +10,20 @@ return new class extends Migration
     {
         /**
          * Unidades y Destacamentos se unifican en esta tabla.
-         * type distingue entre 'unidad' y 'destacamento'.
-         * parent_id permite que un Destacamento pertenezca a una Unidad.
+         * tipo distingue entre 'unidad' y 'destacamento'.
+         * unidad_padre_id permite que un Destacamento pertenezca a una Unidad.
          */
         Schema::create('units', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('prefecture_id')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('parent_id')->nullable()->constrained('units')->nullOnDelete();
-            $table->enum('type', ['unidad', 'destacamento'])->default('unidad');
-            $table->string('name', 150);
+            $table->foreignId('prefectura_id')->nullable()->constrained('prefectures')->nullOnDelete();
+            $table->foreignId('unidad_padre_id')->nullable()->constrained('units')->nullOnDelete();
+            $table->enum('tipo', ['unidad', 'destacamento'])->default('unidad');
+            $table->string('nombre', 150);
             $table->timestamps();
             $table->softDeletes();
 
-            $table->index('prefecture_id');
-            $table->index('parent_id');
+            $table->index('prefectura_id');
+            $table->index('unidad_padre_id');
         });
     }
 

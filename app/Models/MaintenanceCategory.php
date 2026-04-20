@@ -7,10 +7,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class MaintenanceCategory extends Model
 {
-    protected $fillable = ['name', 'description'];
+    protected $fillable = ['nombre', 'descripcion'];
 
-    public function maintenanceRecords(): HasMany
+    public function registrosMantenimiento(): HasMany
     {
-        return $this->hasMany(MaintenanceRecord::class);
+        return $this->hasMany(MaintenanceRecord::class, 'categoria_id');
     }
 }

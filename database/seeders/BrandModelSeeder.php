@@ -9,7 +9,7 @@ class BrandModelSeeder extends Seeder
 {
     public function run(): void
     {
-        $catalog = [
+        $catalogo = [
             'Toyota'        => ['Hilux','Land Cruiser 70','Land Cruiser 200','Land Cruiser Prado','Fortuner','4Runner','RAV4','Corolla','Yaris','Hiace','Coaster','Dyna','Camry'],
             'Ford'          => ['Ranger','F-150','F-250','F-350','Transit','Transit Connect','Explorer','Maverick','Bronco','Mustang','Edge'],
             'Nissan'        => ['Navara','Frontier','Patrol','Terrano','NP300','X-Trail','Urvan','Murano','Pathfinder','Titan','Kicks'],
@@ -43,20 +43,19 @@ class BrandModelSeeder extends Seeder
             'Dongfeng'      => ['Rich 6','Rich 7','S30','AX7'],
         ];
 
-        foreach ($catalog as $brandName => $models) {
-            // Insertar marca si no existe
+        foreach ($catalogo as $nombreMarca => $modelos) {
             DB::table('brands')->insertOrIgnore([
-                'name'       => $brandName,
+                'nombre'     => $nombreMarca,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
 
-            $brandId = DB::table('brands')->where('name', $brandName)->value('id');
+            $marcaId = DB::table('brands')->where('nombre', $nombreMarca)->value('id');
 
-            foreach ($models as $modelName) {
+            foreach ($modelos as $nombreModelo) {
                 DB::table('vehicle_models')->insertOrIgnore([
-                    'brand_id'   => $brandId,
-                    'name'       => $modelName,
+                    'marca_id'   => $marcaId,
+                    'nombre'     => $nombreModelo,
                     'created_at' => now(),
                     'updated_at' => now(),
                 ]);

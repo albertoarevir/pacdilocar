@@ -49,60 +49,60 @@
                         <label class="form-label fw-semibold">
                             Tipo de Vehículo <span class="text-danger">*</span>
                         </label>
-                        <select name="vehicle_type_id"
-                            class="form-select @error('vehicle_type_id') is-invalid @enderror">
+                        <select name="tipo_vehiculo_id"
+                            class="form-select @error('tipo_vehiculo_id') is-invalid @enderror">
                             <option value="">— Seleccione —</option>
-                            @foreach($vehicleTypes as $vt)
-                                <option value="{{ $vt->id }}" {{ old('vehicle_type_id') == $vt->id ? 'selected' : '' }}>
-                                    [{{ $vt->code }}] {{ $vt->name }}
+                            @foreach($tiposVehiculo as $tipo)
+                                <option value="{{ $tipo->id }}" {{ old('tipo_vehiculo_id') == $tipo->id ? 'selected' : '' }}>
+                                    [{{ $tipo->codigo }}] {{ $tipo->nombre }}
                                 </option>
                             @endforeach
                         </select>
-                        @error('vehicle_type_id')
+                        @error('tipo_vehiculo_id')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Marca</label>
-                        <select name="brand_id" id="selectBrand"
-                            class="form-select @error('brand_id') is-invalid @enderror">
+                        <select name="marca_id" id="selectMarca"
+                            class="form-select @error('marca_id') is-invalid @enderror">
                             <option value="">— Seleccione marca —</option>
-                            @foreach($brandsWithIds as $b)
-                                <option value="{{ $b['id'] }}"
-                                    {{ old('brand_id') == $b['id'] ? 'selected' : '' }}>
-                                    {{ $b['name'] }}
+                            @foreach($marcasConIds as $m)
+                                <option value="{{ $m['id'] }}"
+                                    {{ old('marca_id') == $m['id'] ? 'selected' : '' }}>
+                                    {{ $m['nombre'] }}
                                 </option>
                             @endforeach
                         </select>
-                        @error('brand_id')
+                        @error('marca_id')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Modelo</label>
-                        <select name="vehicle_model_id" id="selectModel"
-                            class="form-select @error('vehicle_model_id') is-invalid @enderror"
-                            {{ old('brand_id') ? '' : 'disabled' }}>
+                        <select name="modelo_id" id="selectModelo"
+                            class="form-select @error('modelo_id') is-invalid @enderror"
+                            {{ old('marca_id') ? '' : 'disabled' }}>
                             <option value="">— Seleccione primero la marca —</option>
                         </select>
-                        @error('vehicle_model_id')
+                        @error('modelo_id')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
-                        <small class="text-muted" id="modelHint">
+                        <small class="text-muted" id="modeloHint">
                             Selecciona una marca para ver los modelos disponibles.
                         </small>
                     </div>
 
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Año</label>
-                        <input type="number" name="year"
-                            class="form-control @error('year') is-invalid @enderror"
-                            value="{{ old('year') }}"
+                        <input type="number" name="anio"
+                            class="form-control @error('anio') is-invalid @enderror"
+                            value="{{ old('anio') }}"
                             min="1950" max="{{ date('Y') + 1 }}"
                             placeholder="{{ date('Y') }}">
-                        @error('year')
+                        @error('anio')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
@@ -112,9 +112,9 @@
                         <select name="color_id"
                             class="form-select @error('color_id') is-invalid @enderror">
                             <option value="">— Sin especificar —</option>
-                            @foreach($colors as $c)
-                                <option value="{{ $c->id }}" {{ old('color_id') == $c->id ? 'selected' : '' }}>
-                                    {{ $c->name }}
+                            @foreach($colores as $color)
+                                <option value="{{ $color->id }}" {{ old('color_id') == $color->id ? 'selected' : '' }}>
+                                    {{ $color->nombre }}
                                 </option>
                             @endforeach
                         </select>
@@ -125,46 +125,46 @@
 
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Combustible</label>
-                        <select name="fuel_type_id"
-                            class="form-select @error('fuel_type_id') is-invalid @enderror">
+                        <select name="tipo_combustible_id"
+                            class="form-select @error('tipo_combustible_id') is-invalid @enderror">
                             <option value="">— Sin especificar —</option>
-                            @foreach($fuelTypes as $ft)
-                                <option value="{{ $ft->id }}" {{ old('fuel_type_id') == $ft->id ? 'selected' : '' }}>
-                                    {{ $ft->name }}
+                            @foreach($tiposCombustible as $tc)
+                                <option value="{{ $tc->id }}" {{ old('tipo_combustible_id') == $tc->id ? 'selected' : '' }}>
+                                    {{ $tc->nombre }}
                                 </option>
                             @endforeach
                         </select>
-                        @error('fuel_type_id')
+                        @error('tipo_combustible_id')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">N° Motor</label>
-                        <input type="text" name="engine_number"
-                            class="form-control @error('engine_number') is-invalid @enderror"
-                            value="{{ old('engine_number') }}" maxlength="100">
-                        @error('engine_number')
+                        <input type="text" name="numero_motor"
+                            class="form-control @error('numero_motor') is-invalid @enderror"
+                            value="{{ old('numero_motor') }}" maxlength="100">
+                        @error('numero_motor')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">N° Chasis</label>
-                        <input type="text" name="chassis_number"
-                            class="form-control @error('chassis_number') is-invalid @enderror"
-                            value="{{ old('chassis_number') }}" maxlength="100">
-                        @error('chassis_number')
+                        <input type="text" name="numero_chasis"
+                            class="form-control @error('numero_chasis') is-invalid @enderror"
+                            value="{{ old('numero_chasis') }}" maxlength="100">
+                        @error('numero_chasis')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Fecha Alta en Servicio</label>
-                        <input type="date" name="service_start_date"
-                            class="form-control @error('service_start_date') is-invalid @enderror"
-                            value="{{ old('service_start_date') }}">
-                        @error('service_start_date')
+                        <input type="date" name="fecha_inicio_servicio"
+                            class="form-control @error('fecha_inicio_servicio') is-invalid @enderror"
+                            value="{{ old('fecha_inicio_servicio') }}">
+                        @error('fecha_inicio_servicio')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
@@ -173,49 +173,49 @@
                         <label class="form-label fw-semibold">
                             Estado <span class="text-danger">*</span>
                         </label>
-                        <select name="vehicle_status_id"
-                            class="form-select @error('vehicle_status_id') is-invalid @enderror">
+                        <select name="estado_vehiculo_id"
+                            class="form-select @error('estado_vehiculo_id') is-invalid @enderror">
                             <option value="">— Seleccione —</option>
-                            @foreach($statuses as $s)
-                                <option value="{{ $s->id }}"
-                                    {{ old('vehicle_status_id', $statuses->firstWhere('code','OPERATIVO')?->id) == $s->id ? 'selected' : '' }}>
-                                    {{ $s->name }}
+                            @foreach($estados as $estado)
+                                <option value="{{ $estado->id }}"
+                                    {{ old('estado_vehiculo_id', $estados->firstWhere('codigo','OPERATIVO')?->id) == $estado->id ? 'selected' : '' }}>
+                                    {{ $estado->nombre }}
                                 </option>
                             @endforeach
                         </select>
-                        @error('vehicle_status_id')
+                        @error('estado_vehiculo_id')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
                     <div class="col-12">
                         <label class="form-label fw-semibold">Función que Desarrolla</label>
-                        <select name="vehicle_function_id"
-                            class="form-select @error('vehicle_function_id') is-invalid @enderror">
+                        <select name="funcion_id"
+                            class="form-select @error('funcion_id') is-invalid @enderror">
                             <option value="">— Sin especificar —</option>
-                            @foreach($functions as $fn)
-                                <option value="{{ $fn->id }}" {{ old('vehicle_function_id') == $fn->id ? 'selected' : '' }}>
-                                    {{ $fn->name }}
+                            @foreach($funciones as $fn)
+                                <option value="{{ $fn->id }}" {{ old('funcion_id') == $fn->id ? 'selected' : '' }}>
+                                    {{ $fn->nombre }}
                                 </option>
                             @endforeach
                         </select>
-                        @error('vehicle_function_id')
+                        @error('funcion_id')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
                     <div class="col-12">
                         <label class="form-label fw-semibold">Origen Financiamiento</label>
-                        <select name="funding_origin_id"
-                            class="form-select @error('funding_origin_id') is-invalid @enderror">
+                        <select name="origen_financiamiento_id"
+                            class="form-select @error('origen_financiamiento_id') is-invalid @enderror">
                             <option value="">— Sin especificar —</option>
-                            @foreach($fundingOrigins as $fo)
-                                <option value="{{ $fo->id }}" {{ old('funding_origin_id') == $fo->id ? 'selected' : '' }}>
-                                    {{ $fo->name }}
+                            @foreach($origenesFinanciamiento as $of)
+                                <option value="{{ $of->id }}" {{ old('origen_financiamiento_id') == $of->id ? 'selected' : '' }}>
+                                    {{ $of->nombre }}
                                 </option>
                             @endforeach
                         </select>
-                        @error('funding_origin_id')
+                        @error('origen_financiamiento_id')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
@@ -239,25 +239,25 @@
 
                     <div class="col-12">
                         <label class="form-label fw-semibold">Jefatura de Zona</label>
-                        <select name="zone_id" id="selectZone"
-                            class="form-select @error('zone_id') is-invalid @enderror">
+                        <select name="zona_id" id="selectZona"
+                            class="form-select @error('zona_id') is-invalid @enderror">
                             <option value="">— Seleccione Zona —</option>
-                            @foreach($zones as $z)
-                                <option value="{{ $z->id }}" {{ old('zone_id') == $z->id ? 'selected' : '' }}>
-                                    {{ $z->name }}
+                            @foreach($zonas as $zona)
+                                <option value="{{ $zona->id }}" {{ old('zona_id') == $zona->id ? 'selected' : '' }}>
+                                    {{ $zona->nombre }}
                                 </option>
                             @endforeach
                         </select>
-                        @error('zone_id')
+                        @error('zona_id')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Provincia</label>
-                        <select name="province_id" id="selectProvince"
+                        <select name="province_id" id="selectProvincia"
                             class="form-select @error('province_id') is-invalid @enderror"
-                            {{ old('zone_id') ? '' : 'disabled' }}>
+                            {{ old('zona_id') ? '' : 'disabled' }}>
                             <option value="">— Seleccione primero la Zona —</option>
                         </select>
                         @error('province_id')
@@ -267,44 +267,44 @@
 
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Comuna</label>
-                        <select name="municipality_id" id="selectMunicipality"
-                            class="form-select @error('municipality_id') is-invalid @enderror"
+                        <select name="municipio_id" id="selectMunicipio"
+                            class="form-select @error('municipio_id') is-invalid @enderror"
                             {{ old('province_id') ? '' : 'disabled' }}>
                             <option value="">— Seleccione primero la Provincia —</option>
                         </select>
-                        @error('municipality_id')
+                        @error('municipio_id')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Prefectura Asignada</label>
-                        <select name="prefecture_id"
-                            class="form-select @error('prefecture_id') is-invalid @enderror">
+                        <select name="prefectura_id"
+                            class="form-select @error('prefectura_id') is-invalid @enderror">
                             <option value="">— Sin especificar —</option>
-                            @foreach($prefectures as $pf)
-                                <option value="{{ $pf->id }}" {{ old('prefecture_id') == $pf->id ? 'selected' : '' }}>
-                                    {{ $pf->name }}
+                            @foreach($prefecturas as $pf)
+                                <option value="{{ $pf->id }}" {{ old('prefectura_id') == $pf->id ? 'selected' : '' }}>
+                                    {{ $pf->nombre }}
                                 </option>
                             @endforeach
                         </select>
-                        @error('prefecture_id')
+                        @error('prefectura_id')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label fw-semibold">Unidad Asignada</label>
-                        <select name="unit_id"
-                            class="form-select @error('unit_id') is-invalid @enderror">
+                        <select name="unidad_id"
+                            class="form-select @error('unidad_id') is-invalid @enderror">
                             <option value="">— Sin especificar —</option>
-                            @foreach($units as $u)
-                                <option value="{{ $u->id }}" {{ old('unit_id') == $u->id ? 'selected' : '' }}>
-                                    {{ $u->name }}
+                            @foreach($unidades as $unidad)
+                                <option value="{{ $unidad->id }}" {{ old('unidad_id') == $unidad->id ? 'selected' : '' }}>
+                                    {{ $unidad->nombre }}
                                 </option>
                             @endforeach
                         </select>
-                        @error('unit_id')
+                        @error('unidad_id')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
@@ -322,45 +322,45 @@
 
                 <div class="form-check form-switch mb-3">
                     <input class="form-check-input" type="checkbox" role="switch"
-                        name="is_aggregated" id="is_aggregated" value="1"
-                        {{ old('is_aggregated') ? 'checked' : '' }}
+                        name="es_agregado" id="es_agregado" value="1"
+                        {{ old('es_agregado') ? 'checked' : '' }}
                         onchange="toggleAgregado(this.checked)">
-                    <label class="form-check-label fw-semibold" for="is_aggregated">
+                    <label class="form-check-label fw-semibold" for="es_agregado">
                         Este vehículo está agregado a otra unidad
                     </label>
                 </div>
 
-                <div id="seccionAgregado" style="{{ old('is_aggregated') ? '' : 'display:none' }}">
+                <div id="seccionAgregado" style="{{ old('es_agregado') ? '' : 'display:none' }}">
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label">Prefectura Agregado</label>
-                            <select name="aggregate_prefecture_id"
-                                class="form-select @error('aggregate_prefecture_id') is-invalid @enderror">
+                            <select name="prefectura_agregado_id"
+                                class="form-select @error('prefectura_agregado_id') is-invalid @enderror">
                                 <option value="">— Sin especificar —</option>
-                                @foreach($prefectures as $pf)
+                                @foreach($prefecturas as $pf)
                                     <option value="{{ $pf->id }}"
-                                        {{ old('aggregate_prefecture_id') == $pf->id ? 'selected' : '' }}>
-                                        {{ $pf->name }}
+                                        {{ old('prefectura_agregado_id') == $pf->id ? 'selected' : '' }}>
+                                        {{ $pf->nombre }}
                                     </option>
                                 @endforeach
                             </select>
-                            @error('aggregate_prefecture_id')
+                            @error('prefectura_agregado_id')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">Unidad/Dest. Agregado</label>
-                            <select name="aggregate_unit_id"
-                                class="form-select @error('aggregate_unit_id') is-invalid @enderror">
+                            <select name="unidad_agregado_id"
+                                class="form-select @error('unidad_agregado_id') is-invalid @enderror">
                                 <option value="">— Sin especificar —</option>
-                                @foreach($units as $u)
-                                    <option value="{{ $u->id }}"
-                                        {{ old('aggregate_unit_id') == $u->id ? 'selected' : '' }}>
-                                        {{ $u->name }}
+                                @foreach($unidades as $unidad)
+                                    <option value="{{ $unidad->id }}"
+                                        {{ old('unidad_agregado_id') == $unidad->id ? 'selected' : '' }}>
+                                        {{ $unidad->nombre }}
                                     </option>
                                 @endforeach
                             </select>
-                            @error('aggregate_unit_id')
+                            @error('unidad_agregado_id')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
@@ -376,11 +376,11 @@
                 <i class="bi bi-chat-text me-2 text-secondary"></i>Observaciones
             </div>
             <div class="card-body">
-                <textarea name="observations" rows="3"
-                    class="form-control @error('observations') is-invalid @enderror"
+                <textarea name="observaciones" rows="3"
+                    class="form-control @error('observaciones') is-invalid @enderror"
                     placeholder="Observaciones adicionales del vehículo..."
-                    maxlength="1000">{{ old('observations') }}</textarea>
-                @error('observations')
+                    maxlength="1000">{{ old('observaciones') }}</textarea>
+                @error('observaciones')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
                 <small class="text-muted">Máximo 1000 caracteres.</small>
@@ -417,37 +417,37 @@ const CHECK_URL    = "{{ route('vehicles.checkPatente') }}";
 let patenteTimer = null;
 let patenteOk    = null;
 
-function setIconState(state) {
+function setIconState(estado) {
     patenteIcon.className = '';
-    if (state === 'loading') patenteIcon.className = 'spinner-border spinner-border-sm text-secondary';
-    else if (state === 'ok')  patenteIcon.className = 'bi bi-check-circle-fill text-success fs-5';
-    else if (state === 'error') patenteIcon.className = 'bi bi-x-circle-fill text-danger fs-5';
+    if (estado === 'loading') patenteIcon.className = 'spinner-border spinner-border-sm text-secondary';
+    else if (estado === 'ok')  patenteIcon.className = 'bi bi-check-circle-fill text-success fs-5';
+    else if (estado === 'error') patenteIcon.className = 'bi bi-x-circle-fill text-danger fs-5';
     else patenteIcon.className = 'bi bi-dash text-secondary';
 }
 
-function showMsg(text, type) {
-    patenteMsg.className = `small mt-1 text-${type}`;
-    patenteMsg.innerHTML = text;
+function mostrarMsg(texto, tipo) {
+    patenteMsg.className = `small mt-1 text-${tipo}`;
+    patenteMsg.innerHTML = texto;
 }
 
-async function checkPatente(value) {
-    if (value.length < 2) {
+async function verificarPatente(valor) {
+    if (valor.length < 2) {
         patenteOk = null; setIconState('neutral');
         patenteMsg.className = 'd-none'; btnSubmit.disabled = false; return;
     }
     setIconState('loading');
-    showMsg('<i class="bi bi-hourglass-split me-1"></i>Verificando disponibilidad…', 'secondary');
+    mostrarMsg('<i class="bi bi-hourglass-split me-1"></i>Verificando disponibilidad…', 'secondary');
     btnSubmit.disabled = true;
     try {
-        const res  = await fetch(`${CHECK_URL}?patente=${encodeURIComponent(value)}`);
+        const res  = await fetch(`${CHECK_URL}?patente=${encodeURIComponent(valor)}`);
         const data = await res.json();
-        if (data.available === true) {
+        if (data.disponible === true) {
             patenteOk = true; setIconState('ok');
-            showMsg(`<i class="bi bi-check-circle-fill me-1"></i>${data.message}`, 'success');
+            mostrarMsg(`<i class="bi bi-check-circle-fill me-1"></i>${data.mensaje}`, 'success');
             btnSubmit.disabled = false;
-        } else if (data.available === false) {
+        } else if (data.disponible === false) {
             patenteOk = false; setIconState('error');
-            showMsg(`<i class="bi bi-exclamation-triangle-fill me-1"></i>${data.message}`, 'danger');
+            mostrarMsg(`<i class="bi bi-exclamation-triangle-fill me-1"></i>${data.mensaje}`, 'danger');
             btnSubmit.disabled = true;
         } else {
             patenteOk = null; setIconState('neutral');
@@ -462,95 +462,95 @@ inputPatente.addEventListener('input', function () {
     if (this.value.length < 2) {
         patenteOk = null; setIconState('neutral'); patenteMsg.className = 'd-none'; btnSubmit.disabled = false; return;
     }
-    patenteTimer = setTimeout(() => checkPatente(this.value), 500);
+    patenteTimer = setTimeout(() => verificarPatente(this.value), 500);
 });
 
 document.getElementById('formVehiculo').addEventListener('submit', function (e) {
     if (inputPatente.value.trim().length > 0 && patenteOk === false) {
         e.preventDefault(); inputPatente.focus();
-        showMsg('<i class="bi bi-exclamation-triangle-fill me-1"></i>Corrija la patente antes de guardar.', 'danger');
+        mostrarMsg('<i class="bi bi-exclamation-triangle-fill me-1"></i>Corrija la patente antes de guardar.', 'danger');
     }
 });
 
 // ═══════════════════════════════════════════════════════════════
 // CASCADA: Marca → Modelo (usando IDs)
 // ═══════════════════════════════════════════════════════════════
-const brandsWithIds = @json($brandsWithIds);
-const selectBrand   = document.getElementById('selectBrand');
-const selectModel   = document.getElementById('selectModel');
-const modelHint     = document.getElementById('modelHint');
+const marcasConIds  = @json($marcasConIds);
+const selectMarca   = document.getElementById('selectMarca');
+const selectModelo  = document.getElementById('selectModelo');
+const modeloHint    = document.getElementById('modeloHint');
 
-function populateModels(brandId, selectedModelId = '') {
-    selectModel.innerHTML = '';
-    const brand = brandsWithIds.find(b => b.id == brandId);
-    if (!brand) {
-        selectModel.add(new Option('— Seleccione primero la marca —', ''));
-        selectModel.disabled = true;
-        modelHint.textContent = 'Selecciona una marca para ver los modelos disponibles.';
+function cargarModelos(marcaId, modeloSelId = '') {
+    selectModelo.innerHTML = '';
+    const marca = marcasConIds.find(m => m.id == marcaId);
+    if (!marca) {
+        selectModelo.add(new Option('— Seleccione primero la marca —', ''));
+        selectModelo.disabled = true;
+        modeloHint.textContent = 'Selecciona una marca para ver los modelos disponibles.';
         return;
     }
-    selectModel.add(new Option('— Seleccione modelo —', ''));
-    brand.models.forEach(m => {
-        const opt = new Option(m.name, m.id);
-        if (m.id == selectedModelId) opt.selected = true;
-        selectModel.add(opt);
+    selectModelo.add(new Option('— Seleccione modelo —', ''));
+    marca.modelos.forEach(mo => {
+        const opt = new Option(mo.nombre, mo.id);
+        if (mo.id == modeloSelId) opt.selected = true;
+        selectModelo.add(opt);
     });
-    selectModel.disabled = false;
-    modelHint.textContent = `${brand.models.length} modelos disponibles para ${brand.name}.`;
+    selectModelo.disabled = false;
+    modeloHint.textContent = `${marca.modelos.length} modelos disponibles para ${marca.nombre}.`;
 }
 
-selectBrand.addEventListener('change', () => populateModels(selectBrand.value));
+selectMarca.addEventListener('change', () => cargarModelos(selectMarca.value));
 
-const oldBrandId = @json(old('brand_id', ''));
-const oldModelId = @json(old('vehicle_model_id', ''));
-if (oldBrandId) populateModels(oldBrandId, oldModelId);
+const marcaAnterior  = @json(old('marca_id', ''));
+const modeloAnterior = @json(old('modelo_id', ''));
+if (marcaAnterior) cargarModelos(marcaAnterior, modeloAnterior);
 
 // ═══════════════════════════════════════════════════════════════
-// CASCADA: Zona → Provincia → Comuna
+// CASCADA: Zona → Provincia → Municipio
 // ═══════════════════════════════════════════════════════════════
-const geoCascade         = @json($geoCascade);
-const selectZone         = document.getElementById('selectZone');
-const selectProvince     = document.getElementById('selectProvince');
-const selectMunicipality = document.getElementById('selectMunicipality');
+const geoCascada       = @json($geoCascada);
+const selectZona       = document.getElementById('selectZona');
+const selectProvincia  = document.getElementById('selectProvincia');
+const selectMunicipio  = document.getElementById('selectMunicipio');
 
 function resetSelect(sel, placeholder) {
     sel.innerHTML = ''; sel.add(new Option(placeholder, '')); sel.disabled = true;
 }
 
-function populateProvinces(zoneId, selProvId = '', selMunId = '') {
-    resetSelect(selectProvince, '— Seleccione Provincia —');
-    resetSelect(selectMunicipality, '— Seleccione primero la Provincia —');
-    if (!zoneId || !geoCascade[zoneId]) return;
-    Object.entries(geoCascade[zoneId].provinces)
-        .sort((a, b) => a[1].name.localeCompare(b[1].name))
+function cargarProvincias(zonaId, provSelId = '', munSelId = '') {
+    resetSelect(selectProvincia, '— Seleccione Provincia —');
+    resetSelect(selectMunicipio, '— Seleccione primero la Provincia —');
+    if (!zonaId || !geoCascada[zonaId]) return;
+    Object.entries(geoCascada[zonaId].provincias)
+        .sort((a, b) => a[1].nombre.localeCompare(b[1].nombre))
         .forEach(([pid, prov]) => {
-            const opt = new Option(prov.name, pid);
-            if (pid == selProvId) opt.selected = true;
-            selectProvince.add(opt);
+            const opt = new Option(prov.nombre, pid);
+            if (pid == provSelId) opt.selected = true;
+            selectProvincia.add(opt);
         });
-    selectProvince.disabled = false;
-    if (selProvId) populateMunicipalities(zoneId, selProvId, selMunId);
+    selectProvincia.disabled = false;
+    if (provSelId) cargarMunicipios(zonaId, provSelId, munSelId);
 }
 
-function populateMunicipalities(zoneId, provinceId, selMunId = '') {
-    resetSelect(selectMunicipality, '— Seleccione Comuna —');
-    const prov = geoCascade[zoneId]?.provinces?.[provinceId];
+function cargarMunicipios(zonaId, provinciaId, munSelId = '') {
+    resetSelect(selectMunicipio, '— Seleccione Comuna —');
+    const prov = geoCascada[zonaId]?.provincias?.[provinciaId];
     if (!prov) return;
-    prov.municipalities.sort((a, b) => a.name.localeCompare(b.name)).forEach(m => {
-        const opt = new Option(m.name, m.id);
-        if (m.id == selMunId) opt.selected = true;
-        selectMunicipality.add(opt);
+    prov.municipios.sort((a, b) => a.nombre.localeCompare(b.nombre)).forEach(m => {
+        const opt = new Option(m.nombre, m.id);
+        if (m.id == munSelId) opt.selected = true;
+        selectMunicipio.add(opt);
     });
-    selectMunicipality.disabled = false;
+    selectMunicipio.disabled = false;
 }
 
-selectZone.addEventListener('change', () => populateProvinces(selectZone.value));
-selectProvince.addEventListener('change', () => populateMunicipalities(selectZone.value, selectProvince.value));
+selectZona.addEventListener('change', () => cargarProvincias(selectZona.value));
+selectProvincia.addEventListener('change', () => cargarMunicipios(selectZona.value, selectProvincia.value));
 
-const oldZone     = @json(old('zone_id', ''));
-const oldProvince = @json(old('province_id', ''));
-const oldMun      = @json(old('municipality_id', ''));
-if (oldZone) populateProvinces(oldZone, oldProvince, oldMun);
+const zonaAnterior      = @json(old('zona_id', ''));
+const provinciaAnterior = @json(old('province_id', ''));
+const municipioAnterior = @json(old('municipio_id', ''));
+if (zonaAnterior) cargarProvincias(zonaAnterior, provinciaAnterior, municipioAnterior);
 
 // ═══════════════════════════════════════════════════════════════
 // Sección Agregado

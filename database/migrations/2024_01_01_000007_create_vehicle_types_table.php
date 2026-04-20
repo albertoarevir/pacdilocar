@@ -10,8 +10,8 @@ return new class extends Migration
     {
         Schema::create('vehicle_types', function (Blueprint $table) {
             $table->id();
-            $table->string('code', 10)->unique();
-            $table->string('name', 150)->unique();
+            $table->string('codigo', 10)->unique();
+            $table->string('nombre', 150)->unique();
             $table->timestamps();
         });
     }

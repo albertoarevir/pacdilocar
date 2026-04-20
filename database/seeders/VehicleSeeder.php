@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\FundingOrigin;
 use App\Models\Vehicle;
 use App\Models\VehicleType;
 use App\Services\OperationalSummaryService;
@@ -15,85 +14,84 @@ class VehicleSeeder extends Seeder
 {
     public function run(): void
     {
-        $rpType  = VehicleType::where('code', 'RP')->first();
-        $zType   = VehicleType::where('code', 'Z')->first();
-        $apType  = VehicleType::where('code', 'AP')->first();
-        $tpbType = VehicleType::where('code', 'TPB')->first();
-        $cType   = VehicleType::where('code', 'C')->first();
-        $cmType  = VehicleType::where('code', 'CM')->first();
+        $tipoRP  = VehicleType::where('codigo', 'RP')->first();
+        $tipoZ   = VehicleType::where('codigo', 'Z')->first();
+        $tipoTPB = VehicleType::where('codigo', 'TPB')->first();
+        $tipoC   = VehicleType::where('codigo', 'C')->first();
+        $tipoCM  = VehicleType::where('codigo', 'CM')->first();
 
-        $vehicles = [
+        $vehiculos = [
             [
-                'patente'          => 'Z-1234',
-                'vehicle_type_id'  => $cType?->id,
-                'brand'            => 'Ford',
-                'model'            => 'Transit',
-                'year'             => 2021,
-                'service_start_date' => '2021-05-15',
-                'status'           => 'OPERATIVO',
+                'patente'               => 'Z-1234',
+                'tipo_vehiculo_id'      => $tipoC?->id,
+                'marca'                 => 'Ford',
+                'modelo'                => 'Transit',
+                'anio'                  => 2021,
+                'fecha_inicio_servicio' => '2021-05-15',
+                'estado'                => 'OPERATIVO',
             ],
             [
-                'patente'          => 'RP-9012',
-                'vehicle_type_id'  => $tpbType?->id,
-                'brand'            => 'Hyundai',
-                'model'            => 'Accent',
-                'year'             => 2020,
-                'service_start_date' => '2020-08-01',
-                'status'           => 'OPERATIVO',
+                'patente'               => 'RP-9012',
+                'tipo_vehiculo_id'      => $tipoTPB?->id,
+                'marca'                 => 'Hyundai',
+                'modelo'                => 'Accent',
+                'anio'                  => 2020,
+                'fecha_inicio_servicio' => '2020-08-01',
+                'estado'                => 'OPERATIVO',
             ],
             [
-                'patente'          => 'RP-0009',
-                'vehicle_type_id'  => $rpType?->id,
-                'year'             => null,
-                'service_start_date' => '2025-05-13',
-                'status'           => 'PANNE',
+                'patente'               => 'RP-0009',
+                'tipo_vehiculo_id'      => $tipoRP?->id,
+                'anio'                  => null,
+                'fecha_inicio_servicio' => '2025-05-13',
+                'estado'                => 'PANNE',
             ],
             [
-                'patente'          => 'Z-0001',
-                'vehicle_type_id'  => $zType?->id,
-                'year'             => null,
-                'service_start_date' => '2022-11-05',
-                'status'           => 'PANNE',
+                'patente'               => 'Z-0001',
+                'tipo_vehiculo_id'      => $tipoZ?->id,
+                'anio'                  => null,
+                'fecha_inicio_servicio' => '2022-11-05',
+                'estado'                => 'PANNE',
             ],
             [
-                'patente'          => 'Z-0003',
-                'vehicle_type_id'  => $zType?->id,
-                'year'             => null,
-                'service_start_date' => '2025-10-01',
-                'status'           => 'OPERATIVO',
+                'patente'               => 'Z-0003',
+                'tipo_vehiculo_id'      => $tipoZ?->id,
+                'anio'                  => null,
+                'fecha_inicio_servicio' => '2025-10-01',
+                'estado'                => 'OPERATIVO',
             ],
             [
-                'patente'          => 'RP-9000',
-                'vehicle_type_id'  => $rpType?->id,
-                'year'             => null,
-                'service_start_date' => '2025-05-13',
-                'status'           => 'FUERA_DE_SERVICIO',
+                'patente'               => 'RP-9000',
+                'tipo_vehiculo_id'      => $tipoRP?->id,
+                'anio'                  => null,
+                'fecha_inicio_servicio' => '2025-05-13',
+                'estado'                => 'FUERA_DE_SERVICIO',
             ],
             [
-                'patente'          => 'RP-279',
-                'vehicle_type_id'  => $rpType?->id,
-                'year'             => null,
-                'service_start_date' => '2020-01-01',
-                'status'           => 'OPERATIVO',
+                'patente'               => 'RP-279',
+                'tipo_vehiculo_id'      => $tipoRP?->id,
+                'anio'                  => null,
+                'fecha_inicio_servicio' => '2020-01-01',
+                'estado'                => 'OPERATIVO',
             ],
             [
-                'patente'          => 'RP-280',
-                'vehicle_type_id'  => $rpType?->id,
-                'year'             => null,
-                'service_start_date' => '2020-01-01',
-                'status'           => 'OPERATIVO',
+                'patente'               => 'RP-280',
+                'tipo_vehiculo_id'      => $tipoRP?->id,
+                'anio'                  => null,
+                'fecha_inicio_servicio' => '2020-01-01',
+                'estado'                => 'OPERATIVO',
             ],
             [
-                'patente'          => 'CM-357',
-                'vehicle_type_id'  => $cmType?->id,
-                'year'             => null,
-                'service_start_date' => '2025-10-01',
-                'status'           => 'OPERATIVO',
+                'patente'               => 'CM-357',
+                'tipo_vehiculo_id'      => $tipoCM?->id,
+                'anio'                  => null,
+                'fecha_inicio_servicio' => '2025-10-01',
+                'estado'                => 'OPERATIVO',
             ],
         ];
 
-        foreach ($vehicles as $data) {
-            Vehicle::firstOrCreate(['patente' => $data['patente']], $data);
+        foreach ($vehiculos as $datos) {
+            Vehicle::firstOrCreate(['patente' => $datos['patente']], $datos);
         }
 
         // Recalcula indicadores

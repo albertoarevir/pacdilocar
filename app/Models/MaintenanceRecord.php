@@ -11,84 +11,84 @@ class MaintenanceRecord extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'vehicle_id', 'maintenance_category_id', 'workshop_id',
-        'entry_date', 'exit_date', 'downtime_days', 'record_status',
-        'maintenance_type', 'technical_description', 'total_cost',
-        'mileage_entry', 'work_order_number', 'observations',
+        'vehiculo_id', 'categoria_id', 'taller_id',
+        'fecha_ingreso', 'fecha_salida', 'dias_paralizado', 'estado',
+        'tipo_mantenimiento', 'descripcion_tecnica', 'costo_total',
+        'kilometraje_ingreso', 'numero_orden', 'observaciones',
     ];
 
     protected $casts = [
-        'entry_date'   => 'date',
-        'exit_date'    => 'date',
-        'total_cost'   => 'decimal:2',
-        'downtime_days' => 'integer',
-        'mileage_entry' => 'integer',
+        'fecha_ingreso'    => 'date',
+        'fecha_salida'     => 'date',
+        'costo_total'      => 'decimal:2',
+        'dias_paralizado'  => 'integer',
+        'kilometraje_ingreso' => 'integer',
     ];
 
-    // ─── Boot: cálculo automático de downtime_days ────────────────────────
+    // ─── Boot: cálculo automático de dias_paralizado ────────────────────────
 
     protected static function booted(): void
     {
-        static::saving(function (self $record) {
-            if ($record->entry_date && $record->exit_date) {
-                $record->downtime_days = $record->entry_date->diffInDays($record->exit_date);
+        static::saving(function (self $registro) {
+            if ($registro->fecha_ingreso && $registro->fecha_salida) {
+                $registro->dias_paralizado = $registro->fecha_ingreso->diffInDays($registro->fecha_salida);
             }
         });
     }
 
     // ─── Relaciones ──────────────────────────────────────────────────────────
 
-    public function vehicle(): BelongsTo
+    public function vehiculo(): BelongsTo
     {
-        return $this->belongsTo(Vehicle::class);
+        return $this->belongsTo(Vehicle::class, 'vehiculo_id');
     }
 
-    public function maintenanceCategory(): BelongsTo
+    public function categoriaMantenimiento(): BelongsTo
     {
-        return $this->belongsTo(MaintenanceCategory::class);
+        return $this->belongsTo(MaintenanceCategory::class, 'categoria_id');
     }
 
-    public function workshop(): BelongsTo
+    public function taller(): BelongsTo
     {
-        return $this->belongsTo(Workshop::class);
+        return $this->belongsTo(Workshop::class, 'taller_id');
     }
 
     // ─── Scopes ──────────────────────────────────────────────────────────────
 
     public function scopeAbiertos($query)
     {
-        return $query->where('record_status', 'Abierto');
+        return $query->where('estado', 'Abierto');
     }
 
     public function scopeCerrados($query)
     {
-        return $query->where('record_status', 'Cerrado');
+        return $query->where('estado', 'Cerrado');
     }
 
     public function scopeEnDiagnostico($query)
     {
-        return $query->where('record_status', 'En Diagnóstico');
+        return $query->where('estado', 'En Diagnóstico');
     }
 
     public function scopeCorrectivos($query)
     {
-        return $query->where('maintenance_type', 'Correctivo');
+        return $query->where('tipo_mantenimiento', 'Correctivo');
     }
 
     public function scopePreventivos($query)
     {
-        return $query->where('maintenance_type', 'Preventivo');
+        return $query->where('tipo_mantenimiento', 'Preventivo');
     }
 
     public function scopeEmergencias($query)
     {
-        return $query->where('maintenance_type', 'Emergencia');
+        return $query->where('tipo_mantenimiento', 'Emergencia');
     }
 
     // ─── Accessors ───────────────────────────────────────────────────────────
 
-    public function getIsOpenAttribute(): bool
+    public function getEstaAbiertoAttribute(): bool
     {
-        return in_array($this->record_status, ['Abierto', 'En Diagnóstico']);
+        return in_array($this->estado, ['Abierto', 'En Diagnóstico']);
     }
 }

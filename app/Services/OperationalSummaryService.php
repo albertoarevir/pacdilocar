@@ -11,76 +11,76 @@ use Illuminate\Support\Carbon;
  *
  * KPIs:
  *  - Disponibilidad (%) = días_operativos / días_en_servicio
- *  - Downtime (%)       = días_en_taller / días_en_servicio
+ *  - Paralizado (%)     = días_en_taller / días_en_servicio
  *  - MTTR (días)        = días_en_taller / N° ingresos a taller
  */
 class OperationalSummaryService
 {
-    public function refresh(int $vehicleId): OperationalSummary
+    public function refresh(int $vehiculoId): OperationalSummary
     {
-        $vehicle = Vehicle::with('maintenanceRecords')->findOrFail($vehicleId);
+        $vehiculo = Vehicle::with('registrosMantenimiento')->findOrFail($vehiculoId);
 
-        $totalServiceDays  = $this->computeServiceDays($vehicle);
-        $totalWorkshopDays = $this->computeWorkshopDays($vehicle);
-        $workshopEntries   = $vehicle->maintenanceRecords()->withTrashed(false)->count();
-        $totalCost         = $vehicle->maintenanceRecords()->withTrashed(false)->sum('total_cost');
+        $diasServicioTotal  = $this->calcularDiasServicio($vehiculo);
+        $diasTallerTotal    = $this->calcularDiasTaller($vehiculo);
+        $ingresosTaller     = $vehiculo->registrosMantenimiento()->withTrashed(false)->count();
+        $costoTotal         = $vehiculo->registrosMantenimiento()->withTrashed(false)->sum('costo_total');
 
-        $operationalDays = max(0, $totalServiceDays - $totalWorkshopDays);
+        $diasOperativos = max(0, $diasServicioTotal - $diasTallerTotal);
 
-        $availabilityPct = $totalServiceDays > 0
-            ? round($operationalDays / $totalServiceDays, 6)
+        $pctDisponibilidad = $diasServicioTotal > 0
+            ? round($diasOperativos / $diasServicioTotal, 6)
             : 0.0;
 
-        $downtimePct = $totalServiceDays > 0
-            ? round($totalWorkshopDays / $totalServiceDays, 6)
+        $pctParalizado = $diasServicioTotal > 0
+            ? round($diasTallerTotal / $diasServicioTotal, 6)
             : 0.0;
 
-        $mttrDays = $workshopEntries > 0
-            ? round($totalWorkshopDays / $workshopEntries, 2)
+        $diasMttr = $ingresosTaller > 0
+            ? round($diasTallerTotal / $ingresosTaller, 2)
             : 0.0;
 
         return OperationalSummary::updateOrCreate(
-            ['vehicle_id' => $vehicleId],
+            ['vehiculo_id' => $vehiculoId],
             [
-                'total_service_days'     => $totalServiceDays,
-                'total_workshop_days'    => $totalWorkshopDays,
-                'operational_days'       => $operationalDays,
-                'availability_pct'       => $availabilityPct,
-                'downtime_pct'           => $downtimePct,
-                'workshop_entries'       => $workshopEntries,
-                'total_maintenance_cost' => $totalCost,
-                'mttr_days'              => $mttrDays,
-                'last_computed_at'       => now(),
+                'dias_servicio_total'       => $diasServicioTotal,
+                'dias_taller_total'         => $diasTallerTotal,
+                'dias_operativos'           => $diasOperativos,
+                'pct_disponibilidad'        => $pctDisponibilidad,
+                'pct_paralizado'            => $pctParalizado,
+                'ingresos_taller'           => $ingresosTaller,
+                'costo_mantenimiento_total' => $costoTotal,
+                'dias_mttr'                 => $diasMttr,
+                'ultima_actualizacion'      => now(),
             ]
         );
     }
 
     public function refreshAll(): void
     {
-        Vehicle::whereNotNull('service_start_date')->each(
+        Vehicle::whereNotNull('fecha_inicio_servicio')->each(
             fn (Vehicle $v) => $this->refresh($v->id)
         );
     }
 
     // ─── Helpers privados ────────────────────────────────────────────────────
 
-    private function computeServiceDays(Vehicle $vehicle): int
+    private function calcularDiasServicio(Vehicle $vehiculo): int
     {
-        if (! $vehicle->service_start_date) {
+        if (! $vehiculo->fecha_inicio_servicio) {
             return 0;
         }
 
-        $endDate = in_array($vehicle->vehicleStatus?->code, ['BAJA', 'ENAJENADO'])
-            ? Carbon::parse($vehicle->updated_at)
+        $fechaFin = in_array($vehiculo->estadoVehiculo?->codigo, ['BAJA', 'ENAJENADO'])
+            ? Carbon::parse($vehiculo->updated_at)
             : Carbon::now();
 
-        return (int) Carbon::parse($vehicle->service_start_date)->diffInDays($endDate);
+        return (int) Carbon::parse($vehiculo->fecha_inicio_servicio)->diffInDays($fechaFin);
     }
 
-    private function computeWorkshopDays(Vehicle $vehicle): int
+    private function calcularDiasTaller(Vehicle $vehiculo): int
     {
-        return (int) $vehicle->maintenanceRecords()
-            ->whereNotNull('downtime_days')
-            ->sum('downtime_days');
+        return (int) $vehiculo->registrosMantenimiento()
+            ->whereNotNull('dias_paralizado')
+            ->sum('dias_paralizado');
     }
 }

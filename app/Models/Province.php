@@ -8,20 +8,20 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Province extends Model
 {
-    protected $fillable = ['region_id', 'name'];
+    protected $fillable = ['region_id', 'nombre'];
 
     public function region(): BelongsTo
     {
         return $this->belongsTo(Region::class);
     }
 
-    public function municipalities(): HasMany
+    public function municipios(): HasMany
     {
-        return $this->hasMany(Municipality::class);
+        return $this->hasMany(Municipality::class, 'province_id');
     }
 
-    public function vehicles(): HasMany
+    public function vehiculos(): HasMany
     {
-        return $this->hasMany(Vehicle::class);
+        return $this->hasMany(Vehicle::class, 'province_id');
     }
 }

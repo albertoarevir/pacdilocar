@@ -8,10 +8,10 @@ use Illuminate\View\View;
 
 class DashboardWebController extends Controller
 {
-    public function __construct(private readonly DashboardService $service) {}
+    public function __construct(private readonly DashboardService $servicio) {}
 
     public function index(): View
     {
-        return view('dashboard.index', ['stats' => $this->service->getSummary()]);
+        return view('dashboard.index', ['estadisticas' => $this->servicio->getResumen()]);
     }
 }

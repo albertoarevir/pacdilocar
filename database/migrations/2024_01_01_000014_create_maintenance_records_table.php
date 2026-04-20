@@ -11,32 +11,32 @@ return new class extends Migration
         Schema::create('maintenance_records', function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId('vehicle_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('maintenance_category_id')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('workshop_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('vehiculo_id')->constrained('vehicles')->cascadeOnDelete();
+            $table->foreignId('categoria_id')->nullable()->constrained('maintenance_categories')->nullOnDelete();
+            $table->foreignId('taller_id')->nullable()->constrained('workshops')->nullOnDelete();
 
-            $table->date('entry_date')->comment('Fecha ingreso al taller');
-            $table->date('exit_date')->nullable()->comment('Fecha salida del taller');
-            $table->unsignedSmallInteger('downtime_days')->nullable()
-                ->comment('Días en taller = exit_date - entry_date');
+            $table->date('fecha_ingreso')->comment('Fecha ingreso al taller');
+            $table->date('fecha_salida')->nullable()->comment('Fecha salida del taller');
+            $table->unsignedSmallInteger('dias_paralizado')->nullable()
+                ->comment('Días en taller = fecha_salida - fecha_ingreso');
 
-            $table->enum('record_status', ['Abierto', 'Cerrado', 'En Diagnóstico'])
+            $table->enum('estado', ['Abierto', 'Cerrado', 'En Diagnóstico'])
                 ->default('Abierto')->index();
-            $table->enum('maintenance_type', ['Correctivo', 'Preventivo', 'Emergencia'])
+            $table->enum('tipo_mantenimiento', ['Correctivo', 'Preventivo', 'Emergencia'])
                 ->index();
 
-            $table->text('technical_description')->nullable();
-            $table->decimal('total_cost', 14, 2)->default(0);
-            $table->unsignedInteger('mileage_entry')->nullable()->comment('Kilometraje al ingreso');
-            $table->string('work_order_number', 50)->nullable()->unique();
-            $table->text('observations')->nullable();
+            $table->text('descripcion_tecnica')->nullable();
+            $table->decimal('costo_total', 14, 2)->default(0);
+            $table->unsignedInteger('kilometraje_ingreso')->nullable()->comment('Kilometraje al ingreso');
+            $table->string('numero_orden', 50)->nullable()->unique();
+            $table->text('observaciones')->nullable();
 
             $table->timestamps();
             $table->softDeletes();
 
-            $table->index('vehicle_id');
-            $table->index('entry_date');
-            $table->index('maintenance_category_id');
+            $table->index('vehiculo_id');
+            $table->index('fecha_ingreso');
+            $table->index('categoria_id');
         });
     }
 

@@ -7,9 +7,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Region extends Model
 {
-    protected $fillable = ['number', 'name'];
+    protected $fillable = ['number', 'nombre'];
 
-    public function provinces(): HasMany
+    public function provincias(): HasMany
     {
         return $this->hasMany(Province::class);
     }

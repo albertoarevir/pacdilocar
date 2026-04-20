@@ -11,26 +11,30 @@ class MaintenanceWebController extends Controller
 {
     public function index(Request $request): View
     {
-        $query = MaintenanceRecord::with(['vehicle:id,patente', 'maintenanceCategory:id,name', 'workshop:id,name']);
+        $consulta = MaintenanceRecord::with([
+            'vehiculo:id,patente',
+            'categoriaMantenimiento:id,nombre',
+            'taller:id,nombre',
+        ]);
 
-        if ($request->filled('record_status')) {
-            $query->where('record_status', $request->record_status);
+        if ($request->filled('estado')) {
+            $consulta->where('estado', $request->estado);
         }
 
-        if ($request->filled('maintenance_type')) {
-            $query->where('maintenance_type', $request->maintenance_type);
+        if ($request->filled('tipo_mantenimiento')) {
+            $consulta->where('tipo_mantenimiento', $request->tipo_mantenimiento);
         }
 
-        if ($request->filled('from_date')) {
-            $query->whereDate('entry_date', '>=', $request->from_date);
+        if ($request->filled('desde')) {
+            $consulta->whereDate('fecha_ingreso', '>=', $request->desde);
         }
 
-        if ($request->filled('to_date')) {
-            $query->whereDate('entry_date', '<=', $request->to_date);
+        if ($request->filled('hasta')) {
+            $consulta->whereDate('fecha_ingreso', '<=', $request->hasta);
         }
 
-        $records = $query->orderByDesc('entry_date')->paginate(25);
+        $registros = $consulta->orderByDesc('fecha_ingreso')->paginate(25);
 
-        return view('maintenance.index', compact('records'));
+        return view('maintenance.index', compact('registros'));
     }
 }

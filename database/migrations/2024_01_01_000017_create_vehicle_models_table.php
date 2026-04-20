@@ -10,14 +10,14 @@ return new class extends Migration
     {
         Schema::create('vehicle_models', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('brand_id')
+            $table->foreignId('marca_id')
                 ->constrained('brands')
                 ->cascadeOnDelete();
-            $table->string('name', 100);
+            $table->string('nombre', 100);
             $table->timestamps();
 
-            $table->unique(['brand_id', 'name']);
-            $table->index('brand_id');
+            $table->unique(['marca_id', 'nombre']);
+            $table->index('marca_id');
         });
     }
 

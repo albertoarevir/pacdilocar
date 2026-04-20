@@ -10,13 +10,13 @@ return new class extends Migration
     {
         Schema::create('vehicle_statuses', function (Blueprint $table) {
             $table->id();
-            $table->string('code', 30)->unique()
+            $table->string('codigo', 30)->unique()
                 ->comment('Clave interna: OPERATIVO, PANNE, etc.');
-            $table->string('name', 80);
-            $table->string('description', 255)->nullable();
-            $table->boolean('generates_downtime')->default(false)
+            $table->string('nombre', 80);
+            $table->string('descripcion', 255)->nullable();
+            $table->boolean('genera_paralizado')->default(false)
                 ->comment('Solo PANNE genera Downtime');
-            $table->unsignedTinyInteger('sort_order')->default(0);
+            $table->unsignedTinyInteger('orden')->default(0);
             $table->timestamps();
         });
     }
